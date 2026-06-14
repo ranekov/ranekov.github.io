@@ -1,1 +1,389 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .site { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; }
+  .nav-logo span { color: #ffffff; }
+  .nav-links { display: flex; gap: 0.6rem; }
+  .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
+  .hero { padding: 5rem 2rem 4rem; max-width: 800px; margin: 0 auto; }
+  .prompt-line { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
+  .prompt-line::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #00ff88; border-radius: 50%; animation: blink 1.4s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .hero-name { font-family: 'JetBrains Mono', monospace; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: 0.5rem; }
+  .hero-name .accent { color: #00ff88; }
+  .hero-sub { font-family: 'JetBrains Mono', monospace; font-size: clamp(0.85rem, 2.5vw, 1rem); color: #ff3355; margin-bottom: 1.2rem; opacity: 0.9; }
+  .flag-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 1.4rem; }
+  .flag-badge { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 4px; border: 1px solid #1e1e2e; background: #111118; color: #888; display: flex; align-items: center; gap: 6px; }
+  .hero-desc { font-size: 15px; color: #888; line-height: 1.7; max-width: 540px; margin-bottom: 2rem; }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 10px 22px; background: #00ff88; color: #0a0a0f; border: none; border-radius: 4px; cursor: pointer; font-weight: 700; transition: all 0.2s; }
+  .btn-primary:hover { background: #00e07a; transform: translateY(-1px); }
+  .btn-outline { font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 10px 22px; background: none; color: #00ff88; border: 1px solid #00ff88; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+  .btn-outline:hover { background: rgba(0,255,136,0.08); }
+  .terminal { max-width: 800px; margin: 0 auto 3rem; padding: 0 2rem; }
+  .term-window { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; overflow: hidden; }
+  .term-bar { background: #1a1a28; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+  .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .term-bar .ttl { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #555; margin-left: 8px; }
+  .term-body { padding: 1.2rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.9; }
+  .tg{color:#00ff88} .tr{color:#ff3355} .tb{color:#58a6ff} .ty{color:#ffa657} .td{color:#555} .tw{color:#e0e0e0}
+  .tc { display: inline-block; width: 8px; height: 14px; background: #00ff88; vertical-align: middle; animation: blink 1s infinite; }
+  section { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; border-top: 1px solid #1a1a2e; }
+  .section-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
+  .section-title { font-size: 22px; font-weight: 500; color: #fff; margin-bottom: 2rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; }
+  .card { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1.2rem; transition: border-color 0.2s, transform 0.2s; }
+  .card:hover { border-color: #00ff88; transform: translateY(-2px); }
+  .card-icon { font-size: 20px; margin-bottom: 10px; color: #00ff88; }
+  .card-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: #666; line-height: 1.5; }
+  .skill-categories { display: flex; flex-direction: column; gap: 2rem; }
+  .skill-cat-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #58a6ff; letter-spacing: 1px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .skill-cat-label::after { content: ''; flex: 1; height: 1px; background: #1e1e2e; }
+  .skill-list { display: flex; flex-direction: column; gap: 12px; }
+  .skill-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .skill-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e0e0e0; }
+  .skill-pct { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #00ff88; }
+  .skill-bar { height: 3px; background: #1e1e2e; border-radius: 2px; }
+  .skill-fill { height: 3px; border-radius: 2px; background: linear-gradient(90deg, #00ff88, #00c9ff); }
+  .os-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.8rem; }
+  .os-badge { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 14px; border-radius: 4px; border: 1px solid #1e1e2e; background: #111118; color: #e0e0e0; display: flex; align-items: center; gap: 8px; }
+  .os-badge i { color: #00ff88; font-size: 16px; }
+  .lang-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 0.8rem; }
+  .lang-card { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 0.9rem 1rem; }
+  .lang-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .lang-card-name { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e0e0e0; }
+  .lang-level { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; }
+  .level-native  { background: rgba(0,255,136,0.12); color: #00ff88; border: 1px solid rgba(0,255,136,0.3); }
+  .level-learning{ background: rgba(88,166,255,0.12); color: #58a6ff; border: 1px solid rgba(88,166,255,0.3); }
+  .level-basic   { background: rgba(255,87,87,0.12); color: #ff5757; border: 1px solid rgba(255,87,87,0.3); }
+  .lang-bar { height: 2px; background: #1e1e2e; border-radius: 2px; margin-top: 6px; }
+  .lang-fill { height: 2px; border-radius: 2px; }
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .contact-card { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s; cursor: pointer; }
+  .contact-card:hover { border-color: #00ff88; }
+  .contact-icon { font-size: 20px; color: #00ff88; }
+  .contact-label { font-size: 11px; color: #555; font-family: 'JetBrains Mono', monospace; }
+  .contact-value { font-size: 13px; color: #e0e0e0; }
+  footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
+  footer span { color: #00ff88; }
+  @media (max-width: 500px) {
+    nav { padding: 0.8rem 1rem; }
+    .hero, section, .terminal { padding-left: 1rem; padding-right: 1rem; }
+    .hero { padding-top: 3rem; }
+  }
+</style>
 
+<div class="site">
+<nav>
+  <div class="nav-logo">Rane<span>kov</span></div>
+  <div class="nav-links">
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn" onclick="setLang('ja')">JA</button>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="prompt-line">ranekov@ubuntu:~$ whoami</div>
+  <h1 class="hero-name">Ra<span class="accent" style="color:#ffffff">ne</span>kov</h1>
+  <p class="hero-sub" id="hero-sub">// Welcome to Ranekov's Website</p>
+  <div class="flag-row">
+    <div class="flag-badge">🇯🇵 <span id="badge-from">From Japan</span></div>
+    <div class="flag-badge">🇷🇺 <span id="badge-lang">Learning Russian</span></div>
+  </div>
+  <p class="hero-desc" id="hero-desc">Computer science student from Japan. Passionate about hacking, malware analysis, and computer viruses. Self-studying Russian to connect with the Russian tech community.</p>
+  <div class="cta-row">
+    <button class="btn-primary" id="cta1">$ explore</button>
+    <button class="btn-outline" id="cta2">git clone</button>
+  </div>
+</div>
+
+<div class="terminal">
+  <div class="term-window">
+    <div class="term-bar">
+      <div class="term-dot" style="background:#ff5f56"></div>
+      <div class="term-dot" style="background:#ffbd2e"></div>
+      <div class="term-dot" style="background:#27c93f"></div>
+      <span class="ttl">bash — ranekov@ubuntu</span>
+    </div>
+    <div class="term-body">
+      <div><span class="tg">ranekov</span><span class="td">@</span><span class="tr">ubuntu</span><span class="td">:~$ </span><span class="tw">cat profile.json</span></div>
+      <div class="td">──────────────────────────────────</div>
+      <div><span class="ty">NAME    </span><span class="tw">    Ranekov</span></div>
+      <div><span class="ty">ORIGIN  </span><span class="tw">    🇯🇵 Japan</span></div>
+      <div><span class="ty">STATUS  </span><span class="tw" id="t-status">    Student</span></div>
+      <div><span class="ty">STACK   </span><span class="tb">    PHP · Rust · C · Bash</span></div>
+      <div><span class="ty">LEARNING</span><span class="tg">    🇷🇺 Русский язык</span></div>
+      <div><span class="ty">OS      </span><span class="tw">    Ubuntu &amp; Kali Linux</span></div>
+      <div class="td">──────────────────────────────────</div>
+      <div><span class="tg">ranekov</span><span class="td">@</span><span class="tr">ubuntu</span><span class="td">:~$ </span><span class="tc"></span></div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <p class="section-label" id="sec1-label">// 01 — Interests</p>
+  <h2 class="section-title" id="sec1-title">What I love</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon"><i class="ti ti-bug" aria-hidden="true"></i></div>
+      <div class="card-title" id="c1-title">Hacking</div>
+      <div class="card-desc" id="c1-desc">Ethical hacking, penetration testing, CTF competitions. Love finding vulnerabilities.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon"><i class="ti ti-virus" aria-hidden="true"></i></div>
+      <div class="card-title" id="c2-title">Computer Viruses</div>
+      <div class="card-desc" id="c2-desc">Studying viruses, worms and ransomware. Specializing in reverse engineering.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon"><i class="ti ti-brain" aria-hidden="true"></i></div>
+      <div class="card-title" id="c3-title">AI Research</div>
+      <div class="card-desc" id="c3-desc">Researching machine learning models and their applications in cybersecurity.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon"><i class="ti ti-language" aria-hidden="true"></i></div>
+      <div class="card-title" id="c4-title">Russian Language &amp; Culture</div>
+      <div class="card-desc" id="c4-desc">Fascinated by Cyrillic, Slavic culture, and the Russian hacker community.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <p class="section-label" id="sec2-label">// 02 — Skills</p>
+  <h2 class="section-title" id="sec2-title">Tech Stack</h2>
+  <div class="skill-categories">
+
+    <div>
+      <div class="skill-cat-label" id="cat1">🌐 Web</div>
+      <div class="skill-list">
+        <div>
+          <div class="skill-head"><span class="skill-name">HTML / CSS</span><span class="skill-pct">80%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">JavaScript</span><span class="skill-pct">68%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:68%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">PHP</span><span class="skill-pct">72%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">Rust</span><span class="skill-pct">55%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:55%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-cat-label" id="cat2">🔗 Network</div>
+      <div class="skill-list">
+        <div>
+          <div class="skill-head"><span class="skill-name">TCP/IP · DNS · HTTP</span><span class="skill-pct">78%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">Wireshark · Nmap</span><span class="skill-pct">72%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">Firewall · Packet Analysis</span><span class="skill-pct">65%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-cat-label" id="cat3">🕵️ Anonymity &amp; Cybersecurity</div>
+      <div class="skill-list">
+        <div>
+          <div class="skill-head"><span class="skill-name">Tor · VPN · Proxychains</span><span class="skill-pct">82%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:82%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">Metasploit · Burp Suite</span><span class="skill-pct">70%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">Reverse Engineering · Ghidra</span><span class="skill-pct">62%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:62%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-cat-label" id="cat4">🤖 AI Research</div>
+      <div class="skill-list">
+        <div>
+          <div class="skill-head"><span class="skill-name">PyTorch · TensorFlow</span><span class="skill-pct">60%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:60%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">LLM · Prompt Injection</span><span class="skill-pct">55%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:55%"></div></div>
+        </div>
+        <div>
+          <div class="skill-head"><span class="skill-name">Adversarial ML</span><span class="skill-pct">48%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:48%"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="os-row">
+    <div class="os-badge"><i class="ti ti-brand-ubuntu" aria-hidden="true"></i> Ubuntu</div>
+    <div class="os-badge"><i class="ti ti-terminal-2" aria-hidden="true"></i> Kali Linux</div>
+  </div>
+
+  <div style="margin-top: 2.5rem;">
+    <div class="skill-cat-label" id="lang-label">🗣️ Languages</div>
+    <div class="lang-cards">
+      <div class="lang-card">
+        <div class="lang-card-head">
+          <span class="lang-card-name">🇯🇵 日本語</span>
+          <span class="lang-level level-native" id="lvl-ja">Native</span>
+        </div>
+        <div class="lang-bar"><div class="lang-fill" style="width:100%; background:#00ff88;"></div></div>
+      </div>
+      <div class="lang-card">
+        <div class="lang-card-head">
+          <span class="lang-card-name">🇷🇺 Русский</span>
+          <span class="lang-level level-learning" id="lvl-ru">Learning</span>
+        </div>
+        <div class="lang-bar"><div class="lang-fill" style="width:45%; background:#58a6ff;"></div></div>
+      </div>
+      <div class="lang-card">
+        <div class="lang-card-head">
+          <span class="lang-card-name">🇬🇧 English</span>
+          <span class="lang-level level-basic" id="lvl-en">Beginner</span>
+        </div>
+        <div class="lang-bar"><div class="lang-fill" style="width:22%; background:#ff5757;"></div></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<section>
+  <p class="section-label" id="sec3-label">// 03 — Contact</p>
+  <h2 class="section-title" id="sec3-title">Get in touch</h2>
+  <div class="contact-grid">
+    <div class="contact-card">
+      <div class="contact-icon"><i class="ti ti-brand-github" aria-hidden="true"></i></div>
+      <div>
+        <div class="contact-label">GitHub</div>
+        <div class="contact-value">@ranekov</div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon"><i class="ti ti-mail" aria-hidden="true"></i></div>
+      <div>
+        <div class="contact-label">Email</div>
+        <div class="contact-value">ranekov@proton.me</div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon"><i class="ti ti-brand-telegram" aria-hidden="true"></i></div>
+      <div>
+        <div class="contact-label">Telegram</div>
+        <div class="contact-value">@S_Ranekov</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Ranekov</span> — 🇯🇵 → 🇷🇺 — built with <span>01010111</span>
+</footer>
+</div>
+
+<script>
+const C = {
+  ja: {
+    sub: '// ようこそ、Ranekovのウェブサイトへ',
+    badgeFrom: '日本出身', badgeLang: 'ロシア語学習中',
+    desc: '日本出身のコンピューターサイエンス学生。ハッキング、マルウェア解析、コンピューターウイルスに情熱を注ぐ。ロシア語を独学中で、ロシア技術コミュニティと繋がりたい。',
+    cta1: '$ explore', cta2: 'git clone', tStatus: '    学生',
+    s1label: '// 01 — 興味', s1title: '何が好きか',
+    c1t:'ハッキング', c1d:'倫理的ハッキング、ペネトレーションテスト、CTF。システムの穴を探るのが楽しい。',
+    c2t:'コンピューターウイルス', c2d:'ウイルス・ワーム・ランサムウェアの仕組みを研究。逆アセンブリ解析が専門。',
+    c3t:'AIモデル研究', c3d:'機械学習モデルの仕組みとセキュリティへの応用を研究している。',
+    c4t:'ロシア語・文化', c4d:'キリル文字、スラブ文化、ロシアの技術コミュニティに魅了されている。',
+    s2label: '// 02 — スキル', s2title: '技術スタック',
+    cat1:'🌐 Web', cat2:'🔗 ネットワーク', cat3:'🕵️ 匿名化・サイバーセキュリティ', cat4:'🤖 AIモデル研究',
+    langLabel:'🗣️ 言語', lvlJa:'ネイティブ', lvlRu:'学習中', lvlEn:'初級',
+    s3label: '// 03 — コンタクト', s3title: '連絡先',
+  },
+  en: {
+    sub: '// Welcome to Ranekov\'s Website',
+    badgeFrom: 'From Japan', badgeLang: 'Learning Russian',
+    desc: 'Computer science student from Japan. Passionate about hacking, malware analysis, and computer viruses. Self-studying Russian to connect with the Russian tech community.',
+    cta1: '$ explore', cta2: 'git clone', tStatus: '    Student',
+    s1label: '// 01 — Interests', s1title: 'What I love',
+    c1t:'Hacking', c1d:'Ethical hacking, penetration testing, CTF competitions. Love finding vulnerabilities.',
+    c2t:'Computer Viruses', c2d:'Studying viruses, worms and ransomware. Specializing in reverse engineering.',
+    c3t:'AI Research', c3d:'Researching machine learning models and their applications in cybersecurity.',
+    c4t:'Russian Language & Culture', c4d:'Fascinated by Cyrillic, Slavic culture, and the Russian hacker community.',
+    s2label: '// 02 — Skills', s2title: 'Tech Stack',
+    cat1:'🌐 Web', cat2:'🔗 Network', cat3:'🕵️ Anonymity & Cybersecurity', cat4:'🤖 AI Research',
+    langLabel:'🗣️ Languages', lvlJa:'Native', lvlRu:'Learning', lvlEn:'Beginner',
+    s3label: '// 03 — Contact', s3title: 'Get in touch',
+  },
+  ru: {
+    sub: '// Добро пожаловать на сайт Ranekov',
+    badgeFrom: 'Из Японии', badgeLang: 'Учу русский язык',
+    desc: 'Студент из Японии, изучающий компьютерные науки. Увлечён хакингом, анализом вредоносных программ и вирусами. Самостоятельно учу русский, хочу познакомиться с русским тех-сообществом.',
+    cta1: '$ исследовать', cta2: 'git clone', tStatus: '    Студент',
+    s1label: '// 01 — Интересы', s1title: 'Что мне нравится',
+    c1t:'Хакинг', c1d:'Этичный хакинг, пентестинг, CTF-соревнования. Люблю находить уязвимости.',
+    c2t:'Компьютерные вирусы', c2d:'Изучаю вирусы, черви и программы-вымогатели. Специализируюсь на реверс-инжиниринге.',
+    c3t:'Исследование ИИ', c3d:'Изучаю модели машинного обучения и их применение в кибербезопасности.',
+    c4t:'Русский язык и культура', c4d:'Восхищён кириллицей, славянской культурой и русским хакер-сообществом.',
+    s2label: '// 02 — Навыки', s2title: 'Технологии',
+    cat1:'🌐 Web', cat2:'🔗 Сеть', cat3:'🕵️ Анонимизация и кибербезопасность', cat4:'🤖 Исследование ИИ',
+    langLabel:'🗣️ Языки', lvlJa:'Родной', lvlRu:'Учу', lvlEn:'Начинающий',
+    s3label: '// 03 — Контакт', s3title: 'Связаться',
+  }
+};
+
+function setLang(lang) {
+  const d = C[lang];
+  document.getElementById('hero-sub').textContent = d.sub;
+  document.getElementById('badge-from').textContent = d.badgeFrom;
+  document.getElementById('badge-lang').textContent = d.badgeLang;
+  document.querySelector('.hero-desc').textContent = d.desc;
+  document.getElementById('cta1').textContent = d.cta1;
+  document.getElementById('cta2').textContent = d.cta2;
+  document.getElementById('t-status').textContent = d.tStatus;
+  document.getElementById('sec1-label').textContent = d.s1label;
+  document.getElementById('sec1-title').textContent = d.s1title;
+  document.getElementById('c1-title').textContent = d.c1t;
+  document.getElementById('c1-title').nextElementSibling.textContent = d.c1d;
+  document.getElementById('c2-title').textContent = d.c2t;
+  document.getElementById('c2-title').nextElementSibling.textContent = d.c2d;
+  document.getElementById('c3-title').textContent = d.c3t;
+  document.getElementById('c3-title').nextElementSibling.textContent = d.c3d;
+  document.getElementById('c4-title').textContent = d.c4t;
+  document.getElementById('c4-title').nextElementSibling.textContent = d.c4d;
+  document.getElementById('sec2-label').textContent = d.s2label;
+  document.getElementById('sec2-title').textContent = d.s2title;
+  document.getElementById('cat1').textContent = d.cat1;
+  document.getElementById('cat2').textContent = d.cat2;
+  document.getElementById('cat3').textContent = d.cat3;
+  document.getElementById('cat4').textContent = d.cat4;
+  document.getElementById('lang-label').textContent = d.langLabel;
+  document.getElementById('lvl-ja').textContent = d.lvlJa;
+  document.getElementById('lvl-ru').textContent = d.lvlRu;
+  document.getElementById('lvl-en').textContent = d.lvlEn;
+  document.getElementById('sec3-label').textContent = d.s3label;
+  document.getElementById('sec3-title').textContent = d.s3title;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+  });
+}
+</script>
