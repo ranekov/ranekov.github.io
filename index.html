@@ -76,7 +76,7 @@
     .hero { padding-top: 3rem; }
   }
 </style>
-
+<title>// Welcome to Ranekov's Website</title>
 <div class="site">
 <nav>
   <div class="nav-logo">Rane<span>kov</span></div>
@@ -353,6 +353,7 @@ const C = {
 
 function setLang(lang) {
   const d = C[lang];
+  document.title = d.sub;
   document.getElementById('hero-sub').textContent = d.sub;
   document.getElementById('badge-from').textContent = d.badgeFrom;
   document.getElementById('badge-lang').textContent = d.badgeLang;
