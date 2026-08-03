@@ -46,6 +46,23 @@
   .post-content pre code { border: none; padding: 0; background: none; }
   .post-content ul, .post-content ol { margin: 0 0 1.1rem 1.4rem; }
   .post-content blockquote { border-left: 3px solid #1e1e2e; padding-left: 1rem; color: #888; margin-bottom: 1.1rem; }
+  .post-nav { display: flex; gap: 12px; margin-top: 2rem; }
+  .post-nav a { flex: 1; display: block; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 0.9rem 1.1rem; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .post-nav a:hover { border-color: #00ff88; transform: translateY(-2px); }
+  .post-nav-label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #555; letter-spacing: 1px; margin-bottom: 0.3rem; }
+  .post-nav-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: #e0e0e0; }
+  .post-nav-next { text-align: right; }
+  .more-posts { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #1a1a2e; }
+  .more-posts-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 1rem; }
+  .search-box { width: 100%; margin-bottom: 1rem; }
+  .search-input { width: 100%; background: #111118; border: 1px solid #1e1e2e; border-radius: 6px; padding: 0.6rem 0.9rem; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e0e0e0; outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: #00ff88; }
+  .search-input::placeholder { color: #555; }
+  .blog-list { display: flex; flex-direction: column; gap: 12px; }
+  .blog-item { display: block; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .blog-item:hover { border-color: #00ff88; transform: translateY(-2px); }
+  .blog-item-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: #e0e0e0; }
+  .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
   footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
   footer span { color: #00ff88; }
   @media (max-width: 500px) {
@@ -71,6 +88,33 @@
   <div class="post-content">
     {{ content }}
   </div>
+
+  {% if page.previous or page.next %}
+  <div class="post-nav">
+    {% if page.previous %}
+    <a href="{{ page.previous.url }}">
+      <span class="post-nav-label">// Prev</span>
+      <span class="post-nav-title">{{ page.previous.title }}</span>
+    </a>
+    {% endif %}
+    {% if page.next %}
+    <a href="{{ page.next.url }}" class="post-nav-next">
+      <span class="post-nav-label">// Next</span>
+      <span class="post-nav-title">{{ page.next.title }}</span>
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="more-posts">
+    <p class="more-posts-label" id="more-posts-label">// More posts</p>
+    <div class="search-box">
+      <input type="text" class="search-input" id="search-input" placeholder="Search...">
+    </div>
+    <div class="blog-list" id="blog-list">
+      <div class="blog-empty" id="blog-loading">Loading...</div>
+    </div>
+  </div>
 </main>
 
 <footer>
@@ -78,6 +122,57 @@
 </footer>
 
 <script>
+const CURRENT_URL = {{ page.url | jsonify }};
+const LATEST_COUNT = 5;
+let allPosts = null;
+let searchQuery = '';
+
+async function fetchAllBlogPosts() {
+  try {
+    const res = await fetch('/search.json', { cache: 'no-store' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data.map(p => ({ name: p.title, url: p.url })) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function renderPosts() {
+  const listEl = document.getElementById('blog-list');
+  const posts = (allPosts || []).filter(p => p.url !== CURRENT_URL);
+  let toShow;
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    toShow = posts.filter(p => p.name.toLowerCase().includes(q));
+  } else {
+    toShow = posts.slice(0, LATEST_COUNT);
+  }
+
+  if (!toShow.length) {
+    listEl.innerHTML = '<div class="blog-empty">' + (searchQuery ? 'No matching posts' : 'No posts yet') + '</div>';
+    return;
+  }
+
+  listEl.innerHTML = toShow.map(p =>
+    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
+  ).join('');
+}
+
+async function initMorePosts() {
+  const listEl = document.getElementById('blog-list');
+  listEl.innerHTML = '<div class="blog-empty">Loading...</div>';
+  allPosts = await fetchAllBlogPosts();
+  renderPosts();
+}
+
+document.getElementById('search-input').addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  renderPosts();
+});
+
+initMorePosts();
+
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
 
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
