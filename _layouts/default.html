@@ -63,6 +63,9 @@
   .blog-item:hover { border-color: #00ff88; transform: translateY(-2px); }
   .blog-item-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: #e0e0e0; }
   .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
+  .search-pagination { display: flex; justify-content: center; gap: 10px; margin-top: 1rem; }
+  .search-pagination button { background: none; border: 1px solid #333; color: #888; padding: 5px 14px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .search-pagination button:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
   footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
   footer span { color: #00ff88; }
   @media (max-width: 500px) {
@@ -114,6 +117,7 @@
     <div class="blog-list" id="blog-list">
       <div class="blog-empty" id="blog-loading">Loading...</div>
     </div>
+    <div class="search-pagination" id="search-pagination" style="display:none;"></div>
   </div>
 </main>
 
@@ -124,8 +128,10 @@
 <script>
 const CURRENT_URL = {{ page.url | jsonify }};
 const LATEST_COUNT = 5;
+const SEARCH_PAGE_SIZE = 10;
 let allPosts = null;
 let searchQuery = '';
+let currentPage = 0;
 
 async function fetchAllBlogPosts() {
   try {
@@ -140,23 +146,45 @@ async function fetchAllBlogPosts() {
 
 function renderPosts() {
   const listEl = document.getElementById('blog-list');
+  const pagEl = document.getElementById('search-pagination');
   const posts = (allPosts || []).filter(p => p.url !== CURRENT_URL);
-  let toShow;
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    toShow = posts.filter(p => p.name.toLowerCase().includes(q));
-  } else {
-    toShow = posts.slice(0, LATEST_COUNT);
-  }
 
-  if (!toShow.length) {
-    listEl.innerHTML = '<div class="blog-empty">' + (searchQuery ? 'No matching posts' : 'No posts yet') + '</div>';
+  if (!searchQuery) {
+    pagEl.style.display = 'none';
+    pagEl.innerHTML = '';
+    const toShow = posts.slice(0, LATEST_COUNT);
+    listEl.innerHTML = toShow.length
+      ? toShow.map(p => '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>').join('')
+      : '<div class="blog-empty">No posts yet</div>';
     return;
   }
 
-  listEl.innerHTML = toShow.map(p =>
+  const q = searchQuery.toLowerCase();
+  const results = posts.filter(p => p.name.toLowerCase().includes(q));
+
+  if (!results.length) {
+    listEl.innerHTML = '<div class="blog-empty">No matching posts</div>';
+    pagEl.style.display = 'none';
+    pagEl.innerHTML = '';
+    return;
+  }
+
+  const start = currentPage * SEARCH_PAGE_SIZE;
+  const pageItems = results.slice(start, start + SEARCH_PAGE_SIZE);
+  listEl.innerHTML = pageItems.map(p =>
     '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
   ).join('');
+
+  const hasPrev = currentPage > 0;
+  const hasNext = start + SEARCH_PAGE_SIZE < results.length;
+  let pagHtml = '';
+  if (hasPrev) pagHtml += '<button id="search-prev-btn">Prev</button>';
+  if (hasNext) pagHtml += '<button id="search-next-btn">Next</button>';
+  pagEl.innerHTML = pagHtml;
+  pagEl.style.display = pagHtml ? 'flex' : 'none';
+
+  if (hasPrev) document.getElementById('search-prev-btn').addEventListener('click', () => { currentPage--; renderPosts(); });
+  if (hasNext) document.getElementById('search-next-btn').addEventListener('click', () => { currentPage++; renderPosts(); });
 }
 
 async function initMorePosts() {
@@ -168,6 +196,7 @@ async function initMorePosts() {
 
 document.getElementById('search-input').addEventListener('input', (e) => {
   searchQuery = e.target.value;
+  currentPage = 0;
   renderPosts();
 });
 
