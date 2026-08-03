@@ -28,8 +28,6 @@
   nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 100; }
   .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
   .nav-links { display: flex; align-items: center; gap: 0.6rem; }
-  .home-btn { background: none; border: 1px solid #00ff88; color: #00ff88; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
-  .home-btn:hover { background: rgba(0,255,136,0.08); }
   .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
   .blog-btn:hover { background: rgba(255,51,85,0.08); }
   .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
@@ -80,7 +78,6 @@
 <nav>
   <a class="nav-logo" href="/">Ranekov</a>
   <div class="nav-links">
-    <a class="home-btn" href="/" id="home-btn">Home</a>
     <a class="blog-btn" href="/blog" id="blog-btn">Blog</a>
     <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
     <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
@@ -135,7 +132,6 @@ const SUPPORTED_LANGS = ['en', 'ja', 'ru'];
 
 const C = {
   ja: {
-    home: 'ホーム',
     blog: 'ブログ',
     pageLabel: '// ブログ',
     morePostsLabel: '// もっと見る',
@@ -149,7 +145,6 @@ const C = {
     nextBtn: '次へ',
   },
   en: {
-    home: 'Home',
     blog: 'Blog',
     pageLabel: '// Blog',
     morePostsLabel: '// More posts',
@@ -163,7 +158,6 @@ const C = {
     nextBtn: 'Next',
   },
   ru: {
-    home: 'Главная',
     blog: 'Блог',
     pageLabel: '// Блог',
     morePostsLabel: '// Ещё посты',
@@ -213,7 +207,6 @@ function setLang(lang) {
 function applyLang() {
   const d = C[currentLang];
   document.documentElement.lang = currentLang;
-  document.getElementById('home-btn').textContent = d.home;
   document.getElementById('blog-btn').textContent = d.blog;
   document.getElementById('page-label').textContent = d.pageLabel;
   document.getElementById('more-posts-label').textContent = d.morePostsLabel;
