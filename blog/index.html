@@ -32,8 +32,6 @@ permalink: /blog/
   nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
   .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
   .nav-links { display: flex; align-items: center; gap: 0.6rem; }
-  .home-btn { background: none; border: 1px solid #00ff88; color: #00ff88; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
-  .home-btn:hover { background: rgba(0,255,136,0.08); }
   .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
   main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
@@ -62,7 +60,6 @@ permalink: /blog/
 <nav>
   <a class="nav-logo" href="/">Ranekov</a>
   <div class="nav-links">
-    <a class="home-btn" href="/" id="home-btn">Home</a>
     <button class="lang-btn" onclick="setLang('ru')">RU</button>
     <button class="lang-btn" onclick="setLang('ja')">JA</button>
     <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -88,7 +85,6 @@ permalink: /blog/
 <script>
 const C = {
   ja: {
-    home: 'ホーム',
     pageLabel: '// ブログ',
     pageTitle: 'すべての投稿',
     empty: 'まだ投稿はありません',
@@ -98,7 +94,6 @@ const C = {
     noResults: '該当する投稿がありません',
   },
   en: {
-    home: 'Home',
     pageLabel: '// Blog',
     pageTitle: 'All posts',
     empty: 'No posts yet',
@@ -108,7 +103,6 @@ const C = {
     noResults: 'No matching posts',
   },
   ru: {
-    home: 'Главная',
     pageLabel: '// Блог',
     pageTitle: 'Все посты',
     empty: 'Пока нет постов',
@@ -138,7 +132,6 @@ function setLang(lang) {
   localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
   document.title = d.pageTitle + ' — Ranekov';
-  document.getElementById('home-btn').textContent = d.home;
   document.getElementById('page-label').textContent = d.pageLabel;
   document.getElementById('page-title').textContent = d.pageTitle;
   document.getElementById('search-input').placeholder = d.searchPlaceholder;
