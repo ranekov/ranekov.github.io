@@ -122,9 +122,21 @@ const C = {
 
 let currentLang = 'en';
 
+function detectInitialLang() {
+  const saved = localStorage.getItem('lang');
+  if (saved && C[saved]) return saved;
+  const langs = navigator.languages || [navigator.language || 'en'];
+  for (const l of langs) {
+    const code = l.slice(0, 2).toLowerCase();
+    if (C[code]) return code;
+  }
+  return 'en';
+}
+
 function setLang(lang) {
   const d = C[lang];
   currentLang = lang;
+  localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
   document.title = d.pageTitle + ' — Ranekov';
   document.getElementById('home-btn').textContent = d.home;
@@ -225,6 +237,7 @@ document.getElementById('search-input').addEventListener('input', (e) => {
 
 window.addEventListener('scroll', maybeLoadMore);
 
+setLang(detectInitialLang());
 renderAllBlogPosts();
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
