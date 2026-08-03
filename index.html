@@ -8,6 +8,14 @@
   .nav-links { display: flex; gap: 0.6rem; }
   .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
+  .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; margin-right: 4px; }
+  .blog-btn:hover { background: rgba(255,51,85,0.08); border-color: #ff3355; color: #ff3355; }
+  .blog-list { display: flex; flex-direction: column; gap: 10px; }
+  .blog-item { display: block; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 0.9rem 1.1rem; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .blog-item:hover { border-color: #00ff88; transform: translateY(-2px); }
+  .blog-item-title { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: #e0e0e0; }
+  .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
+  .blog-cta { margin-top: 1.2rem; }
   .hero { padding: 5rem 2rem 4rem; max-width: 800px; margin: 0 auto; }
   .prompt-line { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px; }
   .prompt-line::before { content: ''; display: inline-block; width: 8px; height: 8px; background: #00ff88; border-radius: 50%; animation: blink 1.4s infinite; }
@@ -81,6 +89,7 @@
 <nav>
   <div class="nav-logo">Rane<span>kov</span></div>
   <div class="nav-links">
+    <a class="blog-btn" href="/blog" id="blog-nav-btn">Blog</a>
     <button class="lang-btn" onclick="setLang('ru')">RU</button>
     <button class="lang-btn" onclick="setLang('ja')">JA</button>
     <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -270,7 +279,18 @@
 </section>
 
 <section>
-  <p class="section-label" id="sec3-label">// 03 — Contact</p>
+  <p class="section-label" id="secblog-label">// 03 — Blog</p>
+  <h2 class="section-title" id="secblog-title">Latest posts</h2>
+  <div class="blog-list" id="blog-list">
+    <div class="blog-empty" id="blog-loading">Loading...</div>
+  </div>
+  <div class="blog-cta">
+    <a class="btn-outline" href="/blog" id="blog-view-all" style="text-decoration:none; display:inline-block;">View all posts →</a>
+  </div>
+</section>
+
+<section>
+  <p class="section-label" id="sec3-label">// 04 — Contact</p>
   <h2 class="section-title" id="sec3-title">Get in touch</h2>
   <div class="contact-grid">
     <div class="contact-card">
@@ -298,7 +318,7 @@
 </section>
 
 <footer>
-  <span>© 2026 Ranekov</span> — 🇯🇵 → 🇷🇺 — built with <span>01010111</span>
+  <span id="footer-year">© 2026 Ranekov</span> — built with <span id="footer-commit">...</span>
 </footer>
 </div>
 
@@ -317,7 +337,9 @@ const C = {
     s2label: '// 02 — スキル', s2title: '技術スタック',
     cat1:'🌐 Web', cat2:'🔗 ネットワーク', cat3:'🕵️ 匿名化・サイバーセキュリティ', cat4:'🤖 AIモデル研究',
     langLabel:'🗣️ 言語', lvlJa:'ネイティブ', lvlRu:'学習中', lvlEn:'初級',
-    s3label: '// 03 — コンタクト', s3title: '連絡先',
+    blogNav: 'ブログ',
+    sblabel: '// 03 — ブログ', sbtitle: '最新の投稿', blogEmpty: 'まだ投稿はありません', blogViewAll: 'すべての投稿を見る →',
+    s3label: '// 04 — コンタクト', s3title: '連絡先',
   },
   en: {
     sub: '// Welcome to Ranekov\'s Website',
@@ -332,7 +354,9 @@ const C = {
     s2label: '// 02 — Skills', s2title: 'Tech Stack',
     cat1:'🌐 Web', cat2:'🔗 Network', cat3:'🕵️ Anonymity & Cybersecurity', cat4:'🤖 AI Research',
     langLabel:'🗣️ Languages', lvlJa:'Native', lvlRu:'Learning', lvlEn:'Beginner',
-    s3label: '// 03 — Contact', s3title: 'Get in touch',
+    blogNav: 'Blog',
+    sblabel: '// 03 — Blog', sbtitle: 'Latest posts', blogEmpty: 'No posts yet', blogViewAll: 'View all posts →',
+    s3label: '// 04 — Contact', s3title: 'Get in touch',
   },
   ru: {
     sub: '// Добро пожаловать на сайт Ranekov',
@@ -347,7 +371,9 @@ const C = {
     s2label: '// 02 — Навыки', s2title: 'Технологии',
     cat1:'🌐 Web', cat2:'🔗 Сеть', cat3:'🕵️ Анонимизация и кибербезопасность', cat4:'🤖 Исследование ИИ',
     langLabel:'🗣️ Языки', lvlJa:'Родной', lvlRu:'Учу', lvlEn:'Начинающий',
-    s3label: '// 03 — Контакт', s3title: 'Связаться',
+    blogNav: 'Блог',
+    sblabel: '// 03 — Блог', sbtitle: 'Последние посты', blogEmpty: 'Пока нет постов', blogViewAll: 'Смотреть все посты →',
+    s3label: '// 04 — Контакт', s3title: 'Связаться',
   }
 };
 
@@ -383,8 +409,69 @@ function setLang(lang) {
   document.getElementById('lvl-en').textContent = d.lvlEn;
   document.getElementById('sec3-label').textContent = d.s3label;
   document.getElementById('sec3-title').textContent = d.s3title;
+  document.getElementById('blog-nav-btn').textContent = d.blogNav;
+  document.getElementById('secblog-label').textContent = d.sblabel;
+  document.getElementById('secblog-title').textContent = d.sbtitle;
+  document.getElementById('blog-view-all').textContent = d.blogViewAll;
+  currentLang = lang;
+  renderBlogList();
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase() === lang);
   });
 }
+
+let currentLang = 'en';
+let blogPostsCache = null;
+
+async function fetchBlogPosts() {
+  if (blogPostsCache) return blogPostsCache;
+  try {
+    const res = await fetch('https://api.github.com/repos/ranekov/ranekov.github.io/contents/blog');
+    if (!res.ok) { blogPostsCache = []; return blogPostsCache; }
+    const data = await res.json();
+    const files = Array.isArray(data) ? data.filter(item => item.type === 'file' && /\.(html?|md)$/i.test(item.name) && !/^index\.(html?|md)$/i.test(item.name)) : [];
+    files.sort((a, b) => a.name.localeCompare(b.name));
+    blogPostsCache = files.slice(-3).reverse().map(f => ({
+      name: f.name.replace(/\.(html?|md)$/i, ''),
+      url: '/blog/' + f.name.replace(/\.(html?|md)$/i, '')
+    }));
+    return blogPostsCache;
+  } catch (e) {
+    blogPostsCache = [];
+    return blogPostsCache;
+  }
+}
+
+async function renderBlogList() {
+  const listEl = document.getElementById('blog-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<div class="blog-empty" id="blog-loading">Loading...</div>';
+  const posts = await fetchBlogPosts();
+  const d = C[currentLang];
+  if (!posts.length) {
+    listEl.innerHTML = '<div class="blog-empty">' + d.blogEmpty + '</div>';
+    return;
+  }
+  listEl.innerHTML = posts.map(p =>
+    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
+  ).join('');
+}
+
+renderBlogList();
+
+document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
+
+fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
+  .then(res => res.ok ? res.json() : null)
+  .then(data => {
+    const el = document.getElementById('footer-commit');
+    if (data && data.sha) {
+      el.textContent = data.sha.slice(0, 7);
+    } else {
+      el.textContent = 'unknown';
+    }
+  })
+  .catch(() => {
+    document.getElementById('footer-commit').textContent = 'unknown';
+  });
 </script>
