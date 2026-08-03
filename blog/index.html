@@ -119,11 +119,11 @@ async function fetchAllBlogPosts() {
     const res = await fetch('https://api.github.com/repos/ranekov/ranekov.github.io/contents/blog');
     if (!res.ok) return [];
     const data = await res.json();
-    const files = Array.isArray(data) ? data.filter(item => item.type === 'file' && /\.(html?|md)$/i.test(item.name) && !/^index\.(html?|md)$/i.test(item.name)) : [];
+    const files = Array.isArray(data) ? data.filter(item => item.type === 'file' && /\.md$/i.test(item.name) && !/^index\.md$/i.test(item.name)) : [];
     files.sort((a, b) => a.name.localeCompare(b.name));
     return files.reverse().map(f => ({
-      name: f.name.replace(/\.(html?|md)$/i, ''),
-      url: '/blog/' + f.name
+      name: f.name.replace(/\.md$/i, ''),
+      url: '/blog/' + f.name.replace(/\.md$/i, '')
     }));
   } catch (e) {
     return [];
