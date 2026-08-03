@@ -33,6 +33,8 @@
   .home-btn:hover { background: rgba(0,255,136,0.08); }
   .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
   .blog-btn:hover { background: rgba(255,51,85,0.08); }
+  .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
   main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
   .page-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
   .post-title { font-size: 28px; font-weight: 500; color: #fff; margin-bottom: 0.6rem; line-height: 1.3; }
@@ -79,13 +81,16 @@
 <nav>
   <a class="nav-logo" href="/">Rane<span>kov</span></a>
   <div class="nav-links">
-    <a class="home-btn" href="/">Home</a>
-    <a class="blog-btn" href="/blog">Blog</a>
+    <a class="home-btn" href="/" id="home-btn">Home</a>
+    <a class="blog-btn" href="/blog" id="blog-btn">Blog</a>
+    <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
+    <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
+    <button class="lang-btn" onclick="setLang('en')" id="lang-btn-en">EN</button>
   </div>
 </nav>
 
 <main>
-  <p class="page-label">// Blog</p>
+  <p class="page-label" id="page-label">// Blog</p>
   <h1 class="post-title">{{ page.title }}</h1>
   <p class="post-date">{{ page.date | date: "%Y-%m-%d" }}</p>
   <div class="post-content">
@@ -96,13 +101,13 @@
   <div class="post-nav">
     {% if page.previous %}
     <a href="{{ page.previous.url }}">
-      <span class="post-nav-label">// Prev</span>
+      <span class="post-nav-label" id="post-nav-prev-label">// Prev</span>
       <span class="post-nav-title">{{ page.previous.title }}</span>
     </a>
     {% endif %}
     {% if page.next %}
     <a href="{{ page.next.url }}" class="post-nav-next">
-      <span class="post-nav-label">// Next</span>
+      <span class="post-nav-label" id="post-nav-next-label">// Next</span>
       <span class="post-nav-title">{{ page.next.title }}</span>
     </a>
     {% endif %}
@@ -126,6 +131,108 @@
 </footer>
 
 <script>
+const PAGE_LANG = {{ page.lang | default: 'en' | jsonify }};
+const SUPPORTED_LANGS = ['en', 'ja', 'ru'];
+
+const C = {
+  ja: {
+    home: 'ホーム',
+    blog: 'ブログ',
+    pageLabel: '// ブログ',
+    morePostsLabel: '// もっと見る',
+    searchPlaceholder: '検索...',
+    empty: 'まだ投稿はありません',
+    noResults: '該当する投稿がありません',
+    loading: '読み込み中...',
+    prevLabel: '// 前へ',
+    nextLabel: '// 次へ',
+    prevBtn: '前へ',
+    nextBtn: '次へ',
+  },
+  en: {
+    home: 'Home',
+    blog: 'Blog',
+    pageLabel: '// Blog',
+    morePostsLabel: '// More posts',
+    searchPlaceholder: 'Search...',
+    empty: 'No posts yet',
+    noResults: 'No matching posts',
+    loading: 'Loading...',
+    prevLabel: '// Prev',
+    nextLabel: '// Next',
+    prevBtn: 'Prev',
+    nextBtn: 'Next',
+  },
+  ru: {
+    home: 'Главная',
+    blog: 'Блог',
+    pageLabel: '// Блог',
+    morePostsLabel: '// Ещё посты',
+    searchPlaceholder: 'Поиск...',
+    empty: 'Пока нет постов',
+    noResults: 'Совпадений не найдено',
+    loading: 'Загрузка...',
+    prevLabel: '// Назад',
+    nextLabel: '// Далее',
+    prevBtn: 'Назад',
+    nextBtn: 'Далее',
+  }
+};
+
+function detectInitialLang() {
+  // 1. Saved preference in localStorage
+  try {
+    const saved = localStorage.getItem('lang');
+    if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
+  } catch (e) {}
+
+  // 2. Browser languages, highest priority first
+  const browserLangs = (navigator.languages && navigator.languages.length)
+    ? navigator.languages
+    : [navigator.language || navigator.userLanguage || ''];
+  for (const bl of browserLangs) {
+    if (!bl) continue;
+    const code = bl.toLowerCase().split('-')[0];
+    if (SUPPORTED_LANGS.includes(code)) return code;
+  }
+
+  // 3. Fall back to the language embedded by the page (page.lang)
+  const pageCode = (PAGE_LANG || 'en').toLowerCase().split('-')[0];
+  if (SUPPORTED_LANGS.includes(pageCode)) return pageCode;
+
+  return 'en';
+}
+
+let currentLang = detectInitialLang();
+
+function setLang(lang) {
+  if (!SUPPORTED_LANGS.includes(lang)) return;
+  currentLang = lang;
+  try { localStorage.setItem('lang', lang); } catch (e) {}
+  applyLang();
+  currentPage = 0;
+  renderPosts();
+}
+
+function applyLang() {
+  const d = C[currentLang];
+  document.documentElement.lang = currentLang;
+  document.getElementById('home-btn').textContent = d.home;
+  document.getElementById('blog-btn').textContent = d.blog;
+  document.getElementById('page-label').textContent = d.pageLabel;
+  document.getElementById('more-posts-label').textContent = d.morePostsLabel;
+  document.getElementById('search-input').placeholder = d.searchPlaceholder;
+
+  const prevLabelEl = document.getElementById('post-nav-prev-label');
+  if (prevLabelEl) prevLabelEl.textContent = d.prevLabel;
+  const nextLabelEl = document.getElementById('post-nav-next-label');
+  if (nextLabelEl) nextLabelEl.textContent = d.nextLabel;
+
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.id === 'lang-btn-' + currentLang);
+  });
+}
+
 const CURRENT_URL = {{ page.url | jsonify }};
 const LATEST_COUNT = 5;
 const SEARCH_PAGE_SIZE = 10;
@@ -147,6 +254,7 @@ async function fetchAllBlogPosts() {
 function renderPosts() {
   const listEl = document.getElementById('blog-list');
   const pagEl = document.getElementById('search-pagination');
+  const d = C[currentLang];
   const posts = (allPosts || []).filter(p => p.url !== CURRENT_URL);
 
   if (!searchQuery) {
@@ -155,7 +263,7 @@ function renderPosts() {
     const toShow = posts.slice(0, LATEST_COUNT);
     listEl.innerHTML = toShow.length
       ? toShow.map(p => '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>').join('')
-      : '<div class="blog-empty">No posts yet</div>';
+      : '<div class="blog-empty">' + d.empty + '</div>';
     return;
   }
 
@@ -163,7 +271,7 @@ function renderPosts() {
   const results = posts.filter(p => p.name.toLowerCase().includes(q));
 
   if (!results.length) {
-    listEl.innerHTML = '<div class="blog-empty">No matching posts</div>';
+    listEl.innerHTML = '<div class="blog-empty">' + d.noResults + '</div>';
     pagEl.style.display = 'none';
     pagEl.innerHTML = '';
     return;
@@ -178,8 +286,8 @@ function renderPosts() {
   const hasPrev = currentPage > 0;
   const hasNext = start + SEARCH_PAGE_SIZE < results.length;
   let pagHtml = '';
-  if (hasPrev) pagHtml += '<button id="search-prev-btn">Prev</button>';
-  if (hasNext) pagHtml += '<button id="search-next-btn">Next</button>';
+  if (hasPrev) pagHtml += '<button id="search-prev-btn">' + d.prevBtn + '</button>';
+  if (hasNext) pagHtml += '<button id="search-next-btn">' + d.nextBtn + '</button>';
   pagEl.innerHTML = pagHtml;
   pagEl.style.display = pagHtml ? 'flex' : 'none';
 
@@ -189,7 +297,7 @@ function renderPosts() {
 
 async function initMorePosts() {
   const listEl = document.getElementById('blog-list');
-  listEl.innerHTML = '<div class="blog-empty">Loading...</div>';
+  listEl.innerHTML = '<div class="blog-empty">' + C[currentLang].loading + '</div>';
   allPosts = await fetchAllBlogPosts();
   renderPosts();
 }
@@ -200,6 +308,7 @@ document.getElementById('search-input').addEventListener('input', (e) => {
   renderPosts();
 });
 
+applyLang();
 initMorePosts();
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
