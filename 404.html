@@ -1,0 +1,172 @@
+<!--
+  - Inter
+    Copyright (c) Rasmus Andersson
+    Licensed under the SIL Open Font License, Version 1.1
+    https://fonts.google.com/specimen/Inter
+    https://scripts.sil.org/OFL
+
+  - JetBrains Mono
+    Copyright (c) JetBrains s.r.o.
+    Licensed under the SIL Open Font License, Version 1.1
+    https://fonts.google.com/specimen/JetBrains+Mono
+    https://scripts.sil.org/OFL
+
+  Fonts are loaded via Google Fonts (https://fonts.google.com), which serves
+  them under their respective open-source licenses. No modification has been
+  made to the font files themselves.
+-->
+---
+permalink: /404.html
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — Ranekov</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; display: flex; flex-direction: column; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
+  .nav-logo span { color: #ffffff; }
+  .nav-links { display: flex; align-items: center; gap: 0.6rem; }
+  .home-btn { background: none; border: 1px solid #00ff88; color: #00ff88; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .home-btn:hover { background: rgba(0,255,136,0.08); }
+  .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .blog-btn:hover { background: rgba(255,51,85,0.08); }
+  .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
+  main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .error-code { font-family: 'JetBrains Mono', monospace; font-size: 72px; font-weight: 700; color: #ff3355; line-height: 1; margin-bottom: 1rem; }
+  .error-title { font-size: 24px; font-weight: 500; color: #fff; margin-bottom: 0.6rem; }
+  .error-desc { font-size: 15px; line-height: 1.8; color: #ccc; margin-bottom: 2rem; }
+  .error-home-btn { display: inline-block; background: none; border: 1px solid #00ff88; color: #00ff88; padding: 0.6rem 1.4rem; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 13px; text-decoration: none; transition: all 0.2s; }
+  .error-home-btn:hover { background: rgba(0,255,136,0.08); }
+  footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; width: 100%; }
+  footer span { color: #00ff88; }
+  @media (max-width: 500px) {
+    nav { padding: 0.8rem 1rem; }
+    main { padding: 2rem 1rem; }
+    .error-code { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Rane<span>kov</span></a>
+  <div class="nav-links">
+    <a class="home-btn" href="/" id="home-btn">Home</a>
+    <a class="blog-btn" href="/blog" id="blog-btn">Blog</a>
+    <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
+    <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
+    <button class="lang-btn" onclick="setLang('en')" id="lang-btn-en">EN</button>
+  </div>
+</nav>
+
+<main>
+  <div class="error-code">404</div>
+  <h1 class="error-title" id="error-title">Page not found</h1>
+  <p class="error-desc" id="error-desc">The page you're looking for doesn't exist or has been moved.</p>
+  <a class="error-home-btn" href="/" id="error-home-btn">Back to home</a>
+</main>
+
+<footer>
+  <span id="footer-year">© 2026 Ranekov</span> — built with <span id="footer-commit">...</span>
+</footer>
+
+<script>
+const PAGE_LANG = "en";
+const SUPPORTED_LANGS = ['en', 'ja', 'ru'];
+
+const C = {
+  ja: {
+    home: 'ホーム',
+    blog: 'ブログ',
+    errorTitle: 'ページが見つかりません',
+    errorDesc: 'お探しのページは存在しないか、移動された可能性があります。',
+    errorHome: 'ホームに戻る',
+  },
+  en: {
+    home: 'Home',
+    blog: 'Blog',
+    errorTitle: 'Page not found',
+    errorDesc: "The page you're looking for doesn't exist or has been moved.",
+    errorHome: 'Back to home',
+  },
+  ru: {
+    home: 'Главная',
+    blog: 'Блог',
+    errorTitle: 'Страница не найдена',
+    errorDesc: 'Страница, которую вы ищете, не существует или была перемещена.',
+    errorHome: 'На главную',
+  }
+};
+
+function detectInitialLang() {
+  try {
+    const saved = localStorage.getItem('lang');
+    if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
+  } catch (e) {}
+
+  const browserLangs = (navigator.languages && navigator.languages.length)
+    ? navigator.languages
+    : [navigator.language || navigator.userLanguage || ''];
+  for (const bl of browserLangs) {
+    if (!bl) continue;
+    const code = bl.toLowerCase().split('-')[0];
+    if (SUPPORTED_LANGS.includes(code)) return code;
+  }
+
+  const pageCode = (PAGE_LANG || 'en').toLowerCase().split('-')[0];
+  if (SUPPORTED_LANGS.includes(pageCode)) return pageCode;
+
+  return 'en';
+}
+
+let currentLang = detectInitialLang();
+
+function setLang(lang) {
+  if (!SUPPORTED_LANGS.includes(lang)) return;
+  currentLang = lang;
+  try { localStorage.setItem('lang', lang); } catch (e) {}
+  applyLang();
+}
+
+function applyLang() {
+  const d = C[currentLang];
+  document.documentElement.lang = currentLang;
+  document.getElementById('home-btn').textContent = d.home;
+  document.getElementById('blog-btn').textContent = d.blog;
+  document.getElementById('error-title').textContent = d.errorTitle;
+  document.getElementById('error-desc').textContent = d.errorDesc;
+  document.getElementById('error-home-btn').textContent = d.errorHome;
+
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.id === 'lang-btn-' + currentLang);
+  });
+}
+
+applyLang();
+
+document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
+
+fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
+  .then(res => res.ok ? res.json() : null)
+  .then(data => {
+    const el = document.getElementById('footer-commit');
+    if (data && data.sha) {
+      el.textContent = data.sha.slice(0, 7);
+    } else {
+      el.textContent = 'unknown';
+    }
+  })
+  .catch(() => {
+    document.getElementById('footer-commit').textContent = 'unknown';
+  });
+</script>
+
+</body>
+</html>
