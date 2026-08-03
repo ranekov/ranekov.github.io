@@ -146,7 +146,7 @@ let searchQuery = '';
 
 async function fetchAllBlogPosts() {
   try {
-    const res = await fetch('/search.json');
+    const res = await fetch('/search.json', { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
     return Array.isArray(data) ? data.map(p => ({ name: p.title, url: p.url })) : [];
