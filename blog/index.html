@@ -1,20 +1,7 @@
-<!--
-  - Inter
-    Copyright (c) Rasmus Andersson
-    Licensed under the SIL Open Font License, Version 1.1
-    https://fonts.google.com/specimen/Inter
-    https://scripts.sil.org/OFL
-
-  - JetBrains Mono
-    Copyright (c) JetBrains s.r.o.
-    Licensed under the SIL Open Font License, Version 1.1
-    https://fonts.google.com/specimen/JetBrains+Mono
-    https://scripts.sil.org/OFL
-
-  Fonts are loaded via Google Fonts (https://fonts.google.com), which serves
-  them under their respective open-source licenses. No modification has been
-  made to the font files themselves.
--->
+---
+layout: null
+permalink: /blog/
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -133,22 +120,6 @@ function setLang(lang) {
   renderCurrentPosts(true);
 }
 
-async function fetchAllBlogPosts() {
-  try {
-    const res = await fetch('https://api.github.com/repos/ranekov/ranekov.github.io/contents/blog');
-    if (!res.ok) return [];
-    const data = await res.json();
-    const files = Array.isArray(data) ? data.filter(item => item.type === 'file' && /\.md$/i.test(item.name) && !/^index\.md$/i.test(item.name)) : [];
-    files.sort((a, b) => a.name.localeCompare(b.name));
-    return files.reverse().map(f => ({
-      name: f.name.replace(/\.md$/i, ''),
-      url: '/blog/' + f.name.replace(/\.md$/i, '')
-    }));
-  } catch (e) {
-    return [];
-  }
-}
-
 const PAGE_SIZE = 100;
 let blogPostsCache = null;
 let filteredPosts = [];
@@ -156,11 +127,24 @@ let renderedCount = 0;
 let isLoadingMore = false;
 let searchQuery = '';
 
+async function fetchAllBlogPosts() {
+  try {
+    const res = await fetch('/search.json');
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data.map(p => ({ name: p.title, url: p.url })) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
 function getFilteredPosts() {
   if (!searchQuery) return blogPostsCache || [];
   const q = searchQuery.toLowerCase();
   return (blogPostsCache || []).filter(p => p.name.toLowerCase().includes(q));
 }
+
+
 
 function renderCurrentPosts(reset) {
   const listEl = document.getElementById('blog-list');
