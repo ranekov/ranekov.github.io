@@ -413,6 +413,7 @@ const C = {
 
 function setLang(lang) {
   const d = C[lang];
+  localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
   document.title = d.sub;
   document.getElementById('hero-sub').textContent = d.sub;
@@ -457,6 +458,19 @@ function setLang(lang) {
 }
 
 let currentLang = 'en';
+
+function detectInitialLang() {
+  const saved = localStorage.getItem('lang');
+  if (saved && C[saved]) return saved;
+  const langs = navigator.languages || [navigator.language || 'en'];
+  for (const l of langs) {
+    const code = l.slice(0, 2).toLowerCase();
+    if (C[code]) return code;
+  }
+  return 'en';
+}
+
+setLang(detectInitialLang());
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
 
