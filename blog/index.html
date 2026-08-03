@@ -1,1 +1,153 @@
-Hello!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Ranekov</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
+  .nav-logo span { color: #ffffff; }
+  .nav-links { display: flex; align-items: center; gap: 0.6rem; }
+  .home-btn { background: none; border: 1px solid #00ff88; color: #00ff88; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .home-btn:hover { background: rgba(0,255,136,0.08); }
+  .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
+  main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+  .page-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
+  .page-title { font-size: 26px; font-weight: 500; color: #fff; margin-bottom: 2rem; }
+  .blog-list { display: flex; flex-direction: column; gap: 12px; }
+  .blog-item { display: block; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .blog-item:hover { border-color: #00ff88; transform: translateY(-2px); }
+  .blog-item-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: #e0e0e0; }
+  .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
+  footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
+  footer span { color: #00ff88; }
+  @media (max-width: 500px) {
+    nav { padding: 0.8rem 1rem; }
+    main { padding: 2rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Rane<span>kov</span></a>
+  <div class="nav-links">
+    <a class="home-btn" href="/" id="home-btn">Home</a>
+    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn" onclick="setLang('ja')">JA</button>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<main>
+  <p class="page-label" id="page-label">// Blog</p>
+  <h1 class="page-title" id="page-title">All posts</h1>
+  <div class="blog-list" id="blog-list">
+    <div class="blog-empty" id="blog-loading">Loading...</div>
+  </div>
+</main>
+
+<footer>
+  <span id="footer-year">© 2026 Ranekov</span> — built with <span id="footer-commit">...</span>
+</footer>
+
+<script>
+const C = {
+  ja: {
+    home: 'ホーム',
+    pageLabel: '// ブログ',
+    pageTitle: 'すべての投稿',
+    empty: 'まだ投稿はありません',
+    loading: '読み込み中...',
+  },
+  en: {
+    home: 'Home',
+    pageLabel: '// Blog',
+    pageTitle: 'All posts',
+    empty: 'No posts yet',
+    loading: 'Loading...',
+  },
+  ru: {
+    home: 'Главная',
+    pageLabel: '// Блог',
+    pageTitle: 'Все посты',
+    empty: 'Пока нет постов',
+    loading: 'Загрузка...',
+  }
+};
+
+let currentLang = 'en';
+
+function setLang(lang) {
+  const d = C[lang];
+  currentLang = lang;
+  document.title = d.pageTitle + ' — Ranekov';
+  document.getElementById('home-btn').textContent = d.home;
+  document.getElementById('page-label').textContent = d.pageLabel;
+  document.getElementById('page-title').textContent = d.pageTitle;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase() === lang);
+  });
+  renderAllBlogPosts();
+}
+
+async function fetchAllBlogPosts() {
+  try {
+    const res = await fetch('https://api.github.com/repos/ranekov/ranekov.github.io/contents/blog');
+    if (!res.ok) return [];
+    const data = await res.json();
+    const files = Array.isArray(data) ? data.filter(item => item.type === 'file' && /\.(html?|md)$/i.test(item.name) && !/^index\.(html?|md)$/i.test(item.name)) : [];
+    files.sort((a, b) => a.name.localeCompare(b.name));
+    return files.reverse().map(f => ({
+      name: f.name.replace(/\.(html?|md)$/i, ''),
+      url: '/blog/' + f.name
+    }));
+  } catch (e) {
+    return [];
+  }
+}
+
+let blogPostsCache = null;
+
+async function renderAllBlogPosts() {
+  const listEl = document.getElementById('blog-list');
+  const d = C[currentLang];
+  listEl.innerHTML = '<div class="blog-empty">' + d.loading + '</div>';
+  if (!blogPostsCache) {
+    blogPostsCache = await fetchAllBlogPosts();
+  }
+  if (!blogPostsCache.length) {
+    listEl.innerHTML = '<div class="blog-empty">' + d.empty + '</div>';
+    return;
+  }
+  listEl.innerHTML = blogPostsCache.map(p =>
+    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
+  ).join('');
+}
+
+renderAllBlogPosts();
+
+document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
+
+fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
+  .then(res => res.ok ? res.json() : null)
+  .then(data => {
+    const el = document.getElementById('footer-commit');
+    if (data && data.sha) {
+      el.textContent = data.sha.slice(0, 7);
+    } else {
+      el.textContent = 'unknown';
+    }
+  })
+  .catch(() => {
+    document.getElementById('footer-commit').textContent = 'unknown';
+  });
+</script>
+
+</body>
+</html>
