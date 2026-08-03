@@ -180,13 +180,11 @@ const C = {
 };
 
 function detectInitialLang() {
-  // 1. Saved preference in localStorage
   try {
     const saved = localStorage.getItem('lang');
     if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
   } catch (e) {}
 
-  // 2. Browser languages, highest priority first
   const browserLangs = (navigator.languages && navigator.languages.length)
     ? navigator.languages
     : [navigator.language || navigator.userLanguage || ''];
@@ -196,7 +194,6 @@ function detectInitialLang() {
     if (SUPPORTED_LANGS.includes(code)) return code;
   }
 
-  // 3. Fall back to the language embedded by the page (page.lang)
   const pageCode = (PAGE_LANG || 'en').toLowerCase().split('-')[0];
   if (SUPPORTED_LANGS.includes(pageCode)) return pageCode;
 
