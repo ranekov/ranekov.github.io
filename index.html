@@ -433,7 +433,7 @@ async function fetchBlogPosts() {
     files.sort((a, b) => a.name.localeCompare(b.name));
     blogPostsCache = files.slice(-3).reverse().map(f => ({
       name: f.name.replace(/\.(html?|md)$/i, ''),
-      url: '/blog/' + f.name.replace(/\.(html?|md)$/i, '')
+      url: '/blog/' + f.name
     }));
     return blogPostsCache;
   } catch (e) {
