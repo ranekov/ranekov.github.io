@@ -1,5 +1,4 @@
 ---
-layout: default
 title: I started a blog!
 ---
 
