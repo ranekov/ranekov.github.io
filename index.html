@@ -1,3 +1,6 @@
+---
+layout: null
+---
 <!--
   - Inter
     Copyright (c) Rasmus Andersson
@@ -309,7 +312,11 @@
   <p class="section-label" id="secblog-label">// 03 — Blog</p>
   <h2 class="section-title" id="secblog-title">Latest posts</h2>
   <div class="blog-list" id="blog-list">
-    <div class="blog-empty" id="blog-loading">Loading...</div>
+    {% for post in site.posts limit:3 %}
+    <a class="blog-item" href="{{ post.url | relative_url }}"><span class="blog-item-title">{{ post.title }}</span></a>
+    {% else %}
+    <div class="blog-empty" id="blog-empty">No posts yet</div>
+    {% endfor %}
   </div>
   <div class="blog-cta">
     <a class="btn-outline" href="/blog" id="blog-view-all" style="text-decoration:none; display:inline-block;">View all posts →</a>
@@ -442,50 +449,14 @@ function setLang(lang) {
   document.getElementById('secblog-title').textContent = d.sbtitle;
   document.getElementById('blog-view-all').textContent = d.blogViewAll;
   currentLang = lang;
-  renderBlogList();
+  const blogEmptyEl = document.getElementById('blog-empty');
+  if (blogEmptyEl) blogEmptyEl.textContent = d.blogEmpty;
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase() === lang);
   });
 }
 
 let currentLang = 'en';
-let blogPostsCache = null;
-
-async function fetchBlogPosts() {
-  if (blogPostsCache) return blogPostsCache;
-  try {
-    const res = await fetch('https://api.github.com/repos/ranekov/ranekov.github.io/contents/blog');
-    if (!res.ok) { blogPostsCache = []; return blogPostsCache; }
-    const data = await res.json();
-    const files = Array.isArray(data) ? data.filter(item => item.type === 'file' && /\.md$/i.test(item.name) && !/^index\.md$/i.test(item.name)) : [];
-    files.sort((a, b) => a.name.localeCompare(b.name));
-    blogPostsCache = files.slice(-3).reverse().map(f => ({
-      name: f.name.replace(/\.md$/i, ''),
-      url: '/blog/' + f.name.replace(/\.md$/i, '')
-    }));
-    return blogPostsCache;
-  } catch (e) {
-    blogPostsCache = [];
-    return blogPostsCache;
-  }
-}
-
-async function renderBlogList() {
-  const listEl = document.getElementById('blog-list');
-  if (!listEl) return;
-  listEl.innerHTML = '<div class="blog-empty" id="blog-loading">Loading...</div>';
-  const posts = await fetchBlogPosts();
-  const d = C[currentLang];
-  if (!posts.length) {
-    listEl.innerHTML = '<div class="blog-empty">' + d.blogEmpty + '</div>';
-    return;
-  }
-  listEl.innerHTML = posts.map(p =>
-    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
-  ).join('');
-}
-
-renderBlogList();
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
 
