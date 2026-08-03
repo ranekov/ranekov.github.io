@@ -36,11 +36,16 @@
   main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
   .page-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
   .page-title { font-size: 26px; font-weight: 500; color: #fff; margin-bottom: 2rem; }
+  .search-box { width: 100%; margin-bottom: 1.5rem; }
+  .search-input { width: 100%; background: #111118; border: 1px solid #1e1e2e; border-radius: 6px; padding: 0.6rem 0.9rem; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #e0e0e0; outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: #00ff88; }
+  .search-input::placeholder { color: #555; }
   .blog-list { display: flex; flex-direction: column; gap: 12px; }
   .blog-item { display: block; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
   .blog-item:hover { border-color: #00ff88; transform: translateY(-2px); }
   .blog-item-title { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: #e0e0e0; }
   .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
+  .blog-loading-more { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; text-align: center; padding: 1rem 0; }
   footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
   footer span { color: #00ff88; }
   @media (max-width: 500px) {
@@ -64,9 +69,13 @@
 <main>
   <p class="page-label" id="page-label">// Blog</p>
   <h1 class="page-title" id="page-title">All posts</h1>
+  <div class="search-box">
+    <input type="text" class="search-input" id="search-input" placeholder="Search...">
+  </div>
   <div class="blog-list" id="blog-list">
     <div class="blog-empty" id="blog-loading">Loading...</div>
   </div>
+  <div class="blog-loading-more" id="blog-loading-more" style="display:none;"></div>
 </main>
 
 <footer>
@@ -81,6 +90,9 @@ const C = {
     pageTitle: 'すべての投稿',
     empty: 'まだ投稿はありません',
     loading: '読み込み中...',
+    loadingMore: '読み込み中...',
+    searchPlaceholder: '検索...',
+    noResults: '該当する投稿がありません',
   },
   en: {
     home: 'Home',
@@ -88,6 +100,9 @@ const C = {
     pageTitle: 'All posts',
     empty: 'No posts yet',
     loading: 'Loading...',
+    loadingMore: 'Loading...',
+    searchPlaceholder: 'Search...',
+    noResults: 'No matching posts',
   },
   ru: {
     home: 'Главная',
@@ -95,6 +110,9 @@ const C = {
     pageTitle: 'Все посты',
     empty: 'Пока нет постов',
     loading: 'Загрузка...',
+    loadingMore: 'Загрузка...',
+    searchPlaceholder: 'Поиск...',
+    noResults: 'Совпадений не найдено',
   }
 };
 
@@ -108,10 +126,11 @@ function setLang(lang) {
   document.getElementById('home-btn').textContent = d.home;
   document.getElementById('page-label').textContent = d.pageLabel;
   document.getElementById('page-title').textContent = d.pageTitle;
+  document.getElementById('search-input').placeholder = d.searchPlaceholder;
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase() === lang);
   });
-  renderAllBlogPosts();
+  renderCurrentPosts(true);
 }
 
 async function fetchAllBlogPosts() {
@@ -130,7 +149,63 @@ async function fetchAllBlogPosts() {
   }
 }
 
+const PAGE_SIZE = 100;
 let blogPostsCache = null;
+let filteredPosts = [];
+let renderedCount = 0;
+let isLoadingMore = false;
+let searchQuery = '';
+
+function getFilteredPosts() {
+  if (!searchQuery) return blogPostsCache || [];
+  const q = searchQuery.toLowerCase();
+  return (blogPostsCache || []).filter(p => p.name.toLowerCase().includes(q));
+}
+
+function renderCurrentPosts(reset) {
+  const listEl = document.getElementById('blog-list');
+  const loadingMoreEl = document.getElementById('blog-loading-more');
+  const d = C[currentLang];
+
+  if (reset) {
+    filteredPosts = getFilteredPosts();
+    renderedCount = 0;
+    listEl.innerHTML = '';
+  }
+
+  if (!filteredPosts.length) {
+    listEl.innerHTML = '<div class="blog-empty">' + (searchQuery ? d.noResults : d.empty) + '</div>';
+    loadingMoreEl.style.display = 'none';
+    return;
+  }
+
+  const nextSlice = filteredPosts.slice(renderedCount, renderedCount + PAGE_SIZE);
+  const html = nextSlice.map(p =>
+    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
+  ).join('');
+  listEl.insertAdjacentHTML('beforeend', html);
+  renderedCount += nextSlice.length;
+
+  loadingMoreEl.style.display = renderedCount < filteredPosts.length ? 'block' : 'none';
+}
+
+function maybeLoadMore() {
+  if (isLoadingMore) return;
+  if (renderedCount >= filteredPosts.length) return;
+  const scrollBottom = window.innerHeight + window.scrollY;
+  const threshold = document.body.offsetHeight - 300;
+  if (scrollBottom < threshold) return;
+
+  isLoadingMore = true;
+  const loadingMoreEl = document.getElementById('blog-loading-more');
+  loadingMoreEl.textContent = C[currentLang].loadingMore;
+  loadingMoreEl.style.display = 'block';
+
+  setTimeout(() => {
+    renderCurrentPosts(false);
+    isLoadingMore = false;
+  }, 150);
+}
 
 async function renderAllBlogPosts() {
   const listEl = document.getElementById('blog-list');
@@ -139,14 +214,15 @@ async function renderAllBlogPosts() {
   if (!blogPostsCache) {
     blogPostsCache = await fetchAllBlogPosts();
   }
-  if (!blogPostsCache.length) {
-    listEl.innerHTML = '<div class="blog-empty">' + d.empty + '</div>';
-    return;
-  }
-  listEl.innerHTML = blogPostsCache.map(p =>
-    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
-  ).join('');
+  renderCurrentPosts(true);
 }
+
+document.getElementById('search-input').addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  renderCurrentPosts(true);
+});
+
+window.addEventListener('scroll', maybeLoadMore);
 
 renderAllBlogPosts();
 
