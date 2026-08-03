@@ -1,3 +1,99 @@
+<!--
+  - Inter
+    Copyright (c) Rasmus Andersson
+    Licensed under the SIL Open Font License, Version 1.1
+    https://fonts.google.com/specimen/Inter
+    https://scripts.sil.org/OFL
+
+  - JetBrains Mono
+    Copyright (c) JetBrains s.r.o.
+    Licensed under the SIL Open Font License, Version 1.1
+    https://fonts.google.com/specimen/JetBrains+Mono
+    https://scripts.sil.org/OFL
+
+  Fonts are loaded via Google Fonts (https://fonts.google.com), which serves
+  them under their respective open-source licenses. No modification has been
+  made to the font files themselves.
+-->
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: 'en' }}">
+<head>
 <meta charset="UTF-8">
-<title>{{ page.title }}</title>
-{{ content }}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ page.title }} — Ranekov</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
+  .nav-logo span { color: #ffffff; }
+  .nav-links { display: flex; align-items: center; gap: 0.6rem; }
+  .home-btn { background: none; border: 1px solid #00ff88; color: #00ff88; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .home-btn:hover { background: rgba(0,255,136,0.08); }
+  .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .blog-btn:hover { background: rgba(255,51,85,0.08); }
+  main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+  .page-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
+  .post-title { font-size: 28px; font-weight: 500; color: #fff; margin-bottom: 0.6rem; line-height: 1.3; }
+  .post-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; margin-bottom: 2rem; }
+  .post-content { font-size: 15px; line-height: 1.8; color: #ccc; }
+  .post-content h1, .post-content h2, .post-content h3 { color: #fff; margin: 1.6rem 0 0.8rem; font-weight: 600; }
+  .post-content p { margin-bottom: 1.1rem; }
+  .post-content a { color: #00ff88; }
+  .post-content code { font-family: 'JetBrains Mono', monospace; background: #111118; border: 1px solid #1e1e2e; border-radius: 4px; padding: 0.1rem 0.35rem; font-size: 0.9em; color: #58a6ff; }
+  .post-content pre { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; overflow-x: auto; margin-bottom: 1.1rem; }
+  .post-content pre code { border: none; padding: 0; background: none; }
+  .post-content ul, .post-content ol { margin: 0 0 1.1rem 1.4rem; }
+  .post-content blockquote { border-left: 3px solid #1e1e2e; padding-left: 1rem; color: #888; margin-bottom: 1.1rem; }
+  footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
+  footer span { color: #00ff88; }
+  @media (max-width: 500px) {
+    nav { padding: 0.8rem 1rem; }
+    main { padding: 2rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Rane<span>kov</span></a>
+  <div class="nav-links">
+    <a class="home-btn" href="/">Home</a>
+    <a class="blog-btn" href="/blog">Blog</a>
+  </div>
+</nav>
+
+<main>
+  <p class="page-label">// Blog</p>
+  <h1 class="post-title">{{ page.title }}</h1>
+  <p class="post-date">{{ page.date | date: "%Y-%m-%d" }}</p>
+  <div class="post-content">
+    {{ content }}
+  </div>
+</main>
+
+<footer>
+  <span id="footer-year">© 2026 Ranekov</span> — built with <span id="footer-commit">...</span>
+</footer>
+
+<script>
+document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
+
+fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
+  .then(res => res.ok ? res.json() : null)
+  .then(data => {
+    const el = document.getElementById('footer-commit');
+    if (data && data.sha) {
+      el.textContent = data.sha.slice(0, 7);
+    } else {
+      el.textContent = 'unknown';
+    }
+  })
+  .catch(() => {
+    document.getElementById('footer-commit').textContent = 'unknown';
+  });
+</script>
+
+</body>
+</html>
