@@ -15,6 +15,13 @@
   them under their respective open-source licenses. No modification has been
   made to the font files themselves.
 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>// Welcome to Ranekov's Website</title>
+<link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -88,7 +95,7 @@
   .lang-bar { height: 2px; background: #1e1e2e; border-radius: 2px; margin-top: 6px; }
   .lang-fill { height: 2px; border-radius: 2px; }
   .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
-  .contact-card { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s; cursor: pointer; }
+  .contact-card { background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.2rem; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s; cursor: pointer; color: inherit; }
   .contact-card:hover { border-color: #00ff88; }
   .contact-icon { font-size: 20px; color: #00ff88; }
   .contact-label { font-size: 11px; color: #555; font-family: 'JetBrains Mono', monospace; }
@@ -101,7 +108,8 @@
     .hero { padding-top: 3rem; }
   }
 </style>
-<title>// Welcome to Ranekov's Website</title>
+</head>
+<body>
 <div class="site">
 <nav>
   <div class="nav-logo">Rane<span>kov</span></div>
@@ -310,27 +318,27 @@
   <p class="section-label" id="sec3-label">// 04 — Contact</p>
   <h2 class="section-title" id="sec3-title">Get in touch</h2>
   <div class="contact-grid">
-    <div class="contact-card">
+    <a class="contact-card" href="https://github.com/ranekov" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
       <div class="contact-icon"><i class="ti ti-brand-github" aria-hidden="true"></i></div>
       <div>
         <div class="contact-label">GitHub</div>
         <div class="contact-value">@ranekov</div>
       </div>
-    </div>
-    <div class="contact-card">
+    </a>
+    <a class="contact-card" href="mailto:ranekov@proton.me" style="text-decoration:none;">
       <div class="contact-icon"><i class="ti ti-mail" aria-hidden="true"></i></div>
       <div>
         <div class="contact-label">Email</div>
         <div class="contact-value">ranekov@proton.me</div>
       </div>
-    </div>
-    <div class="contact-card">
+    </a>
+    <a class="contact-card" href="https://t.me/S_Ranekov" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
       <div class="contact-icon"><i class="ti ti-brand-telegram" aria-hidden="true"></i></div>
       <div>
         <div class="contact-label">Telegram</div>
         <div class="contact-value">@S_Ranekov</div>
       </div>
-    </div>
+    </a>
   </div>
 </section>
 
@@ -396,6 +404,7 @@ const C = {
 
 function setLang(lang) {
   const d = C[lang];
+  document.documentElement.lang = lang;
   document.title = d.sub;
   document.getElementById('hero-sub').textContent = d.sub;
   document.getElementById('badge-from').textContent = d.badgeFrom;
@@ -492,3 +501,5 @@ fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
     document.getElementById('footer-commit').textContent = 'unknown';
   });
 </script>
+</body>
+</html>
