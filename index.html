@@ -31,7 +31,7 @@ layout: null
   html, body { scrollbar-width: none; -ms-overflow-style: none; }
   html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   .site { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
-  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: sticky; top: 0; z-index: 100; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
   .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; }
   .nav-logo span { color: #ffffff; }
   .nav-links { display: flex; gap: 0.6rem; }
@@ -459,6 +459,15 @@ function setLang(lang) {
 let currentLang = 'en';
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
+
+(function() {
+  const nav = document.querySelector('nav');
+  function adjustNavOffset() {
+    document.body.style.paddingTop = nav.offsetHeight + 'px';
+  }
+  adjustNavOffset();
+  window.addEventListener('resize', adjustNavOffset);
+})();
 
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
   .then(res => res.ok ? res.json() : null)
