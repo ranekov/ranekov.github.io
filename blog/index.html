@@ -103,6 +103,7 @@ let currentLang = 'en';
 function setLang(lang) {
   const d = C[lang];
   currentLang = lang;
+  document.documentElement.lang = lang;
   document.title = d.pageTitle + ' — Ranekov';
   document.getElementById('home-btn').textContent = d.home;
   document.getElementById('page-label').textContent = d.pageLabel;
