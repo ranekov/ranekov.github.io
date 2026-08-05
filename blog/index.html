@@ -24,8 +24,11 @@ permalink: /blog/
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog — Ranekov</title>
-{% seo %}
+<title>All posts — Ranekov</title>
+<meta name="description"
+content="{{ page.description | default: site.description | escape }}">
+<link rel="canonical"
+href="{{ page.url | absolute_url }}">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
