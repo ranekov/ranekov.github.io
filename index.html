@@ -24,7 +24,13 @@ title: "// Welcome to Ranekov's Website"
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% seo %}
+<title>
+// Welcome to Ranekov's Website
+</title>
+<meta name="description"
+content="{{ page.description | default: site.description | escape }}">
+<link rel="canonical"
+href="{{ page.url | absolute_url }}">
 <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
