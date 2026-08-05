@@ -1,7 +1,8 @@
-title: Ranekov
+title: Ranekov's website
 description: Ranekov's personal website and blog
 url: "https://ranekov.github.io"
 baseurl: ""
+title_separator: "-"
 
 markdown: kramdown
 kramdown:
