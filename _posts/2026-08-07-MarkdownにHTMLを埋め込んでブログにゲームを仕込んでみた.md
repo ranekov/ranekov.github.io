@@ -3,10 +3,111 @@ title: "MarkdownにHTMLを埋め込んでブログにゲームを仕込んでみ
 date: 2026-08-07 22:19 +0900
 lang: ja
 ---
+<style>
+.nb-game-panel {
+  background: #111118;
+  border: 1px solid #1e1e2e;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0 2rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.nb-game-ui {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+}
+.nb-game-ui .nb-label { color: #555; letter-spacing: 1px; }
+.nb-game-ui .nb-value { color: #00ff88; font-weight: 600; }
+.nb-game-ui .nb-lives-value { color: #ff3355; font-weight: 600; }
+
+#nb-canvas-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+#nb-canvas {
+  background: radial-gradient(ellipse at center, #14142b 0%, #08080f 100%);
+  border: 1px solid #1e1e2e;
+  border-radius: 8px;
+  box-shadow: 0 0 24px rgba(0,255,136,0.12);
+  touch-action: none;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  aspect-ratio: 480 / 600;
+  display: block;
+}
+
+.nb-game-msg {
+  text-align: center;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.5px;
+}
+
+.nb-touch-controls {
+  display: none;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.nb-touch-btn {
+  flex: 1;
+  background: #0d0d14;
+  border: 1px solid #1e1e2e;
+  border-radius: 8px;
+  color: #00ff88;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  padding: 16px 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.nb-touch-btn:active {
+  background: rgba(0,255,136,0.12);
+  border-color: #00ff88;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .nb-touch-controls { display: flex; }
+  .nb-game-msg { display: none; }
+}
+
+@media (max-width: 500px) {
+  .nb-game-panel { padding: 1rem; }
+  .nb-game-ui { gap: 14px; font-size: 11px; }
+}
+</style>
+<div class="nb-game-panel">
+  <div class="nb-game-ui">
+    <div><span class="nb-label">SCORE </span><span class="nb-value" id="nb-score">0</span></div>
+    <div><span class="nb-label">HIGH </span><span class="nb-value" id="nb-highscore">0</span></div>
+    <div><span class="nb-label">LIVES </span><span class="nb-lives-value" id="nb-lives">3</span></div>
+    <div><span class="nb-label">LEVEL </span><span class="nb-value" id="nb-level">1</span></div>
+  </div>
+  <div id="nb-canvas-wrap">
+    <canvas id="nb-canvas" width="480" height="600"></canvas>
+  </div>
+  <div class="nb-touch-controls">
+    <div class="nb-touch-btn" id="nb-btn-left">◀</div>
+    <div class="nb-touch-btn" id="nb-btn-right">▶</div>
+  </div>
+  <p class="nb-game-msg">← → キー / マウス / タッチ でパドル移動。ブロックを全部壊すとレベルアップ</p>
+</div>
+> ゲームはめんどいので[claude](https://claude.ai/)に作らせました
 <script>
 (function () {
   const canvas = document.getElementById('nb-canvas');
-  if (!canvas) return; // このページに埋め込みHTMLが無ければ何もしない
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
@@ -270,104 +371,3 @@ lang: ja
   loop();
 })();
 </script>
-<style>
-.nb-game-panel {
-  background: #111118;
-  border: 1px solid #1e1e2e;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 1.5rem 0 2rem;
-  font-family: 'Inter', sans-serif;
-}
-
-.nb-game-ui {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  margin-bottom: 14px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-}
-.nb-game-ui .nb-label { color: #555; letter-spacing: 1px; }
-.nb-game-ui .nb-value { color: #00ff88; font-weight: 600; }
-.nb-game-ui .nb-lives-value { color: #ff3355; font-weight: 600; }
-
-#nb-canvas-wrap {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-#nb-canvas {
-  background: radial-gradient(ellipse at center, #14142b 0%, #08080f 100%);
-  border: 1px solid #1e1e2e;
-  border-radius: 8px;
-  box-shadow: 0 0 24px rgba(0,255,136,0.12);
-  touch-action: none;
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  aspect-ratio: 480 / 600;
-  display: block;
-}
-
-.nb-game-msg {
-  text-align: center;
-  margin-top: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #555;
-  letter-spacing: 0.5px;
-}
-
-.nb-touch-controls {
-  display: none;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.nb-touch-btn {
-  flex: 1;
-  background: #0d0d14;
-  border: 1px solid #1e1e2e;
-  border-radius: 8px;
-  color: #00ff88;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 22px;
-  padding: 16px 0;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-.nb-touch-btn:active {
-  background: rgba(0,255,136,0.12);
-  border-color: #00ff88;
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .nb-touch-controls { display: flex; }
-  .nb-game-msg { display: none; }
-}
-
-@media (max-width: 500px) {
-  .nb-game-panel { padding: 1rem; }
-  .nb-game-ui { gap: 14px; font-size: 11px; }
-}
-</style>
-<div class="nb-game-panel">
-  <div class="nb-game-ui">
-    <div><span class="nb-label">SCORE </span><span class="nb-value" id="nb-score">0</span></div>
-    <div><span class="nb-label">HIGH </span><span class="nb-value" id="nb-highscore">0</span></div>
-    <div><span class="nb-label">LIVES </span><span class="nb-lives-value" id="nb-lives">3</span></div>
-    <div><span class="nb-label">LEVEL </span><span class="nb-value" id="nb-level">1</span></div>
-  </div>
-  <div id="nb-canvas-wrap">
-    <canvas id="nb-canvas" width="480" height="600"></canvas>
-  </div>
-  <div class="nb-touch-controls">
-    <div class="nb-touch-btn" id="nb-btn-left">◀</div>
-    <div class="nb-touch-btn" id="nb-btn-right">▶</div>
-  </div>
-  <p class="nb-game-msg">← → キー / マウス / タッチ でパドル移動。ブロックを全部壊すとレベルアップ</p>
-</div>
-> ゲームはめんどいので[claude](https://claude.ai/)に作らせました
