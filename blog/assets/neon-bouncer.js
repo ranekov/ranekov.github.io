@@ -4,6 +4,15 @@
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
+  const DPR = window.devicePixelRatio || 1;
+  if (DPR > 1) {
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    ctx.scale(DPR, DPR);
+  }
+
   let score = 0, lives = 3, level = 1, highscore = 0;
   const scoreEl = document.getElementById('nb-score');
   const livesEl = document.getElementById('nb-lives');
