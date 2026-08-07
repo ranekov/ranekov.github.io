@@ -32,7 +32,8 @@
 
   let blocks = [];
   const blockRows = 5, blockCols = 8;
-  const blockW = 50, blockH = 18, blockPad = 6, blockOffsetTop = 50, blockOffsetLeft = 15;
+  const blockW = 50, blockH = 18, blockPad = 6, blockOffsetTop = 50;
+  const blockOffsetLeft = (W - (blockCols * blockW + (blockCols - 1) * blockPad)) / 2;
   const colors = ['#ff3355', '#ff9f4d', '#ffe14d', '#00ff88', '#4de3ff'];
 
   function initBlocks() {
