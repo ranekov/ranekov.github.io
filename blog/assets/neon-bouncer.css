@@ -55,20 +55,33 @@
 
 .nb-touch-btn {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #0d0d14;
   border: 1px solid #1e1e2e;
   border-radius: 8px;
-  color: #00ff88;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 22px;
-  padding: 16px 0;
+  padding: 14px 0;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.nb-touch-btn svg {
+  width: 26px;
+  height: 26px;
+  stroke: #00ff88;
+  fill: none;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 4px rgba(0,255,136,0.5));
+  pointer-events: none;
 }
 .nb-touch-btn:active {
   background: rgba(0,255,136,0.12);
   border-color: #00ff88;
+  transform: scale(0.96);
 }
 
 @media (hover: none) and (pointer: coarse) {
