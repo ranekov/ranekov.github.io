@@ -2,16 +2,29 @@
   const canvas = document.getElementById('nb-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
 
-  const DPR = Math.min(window.devicePixelRatio || 1, 3);
-  if (DPR > 1) {
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    ctx.scale(DPR, DPR);
+  const W = 480, H = 600;
+
+  function fitCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const cssW = canvas.getBoundingClientRect().width || canvas.clientWidth || W;
+    const cssH = cssW * (H / W);
+    const scale = (cssW / W) * dpr;
+    canvas.width = Math.round(W * scale);
+    canvas.height = Math.round(H * scale);
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
   }
+  fitCanvas();
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(fitCanvas, 100);
+  });
+  window.addEventListener('orientationchange', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(fitCanvas, 100);
+  });
 
   let score = 0, lives = 3, level = 1, highscore = 0;
   const scoreEl = document.getElementById('nb-score');
