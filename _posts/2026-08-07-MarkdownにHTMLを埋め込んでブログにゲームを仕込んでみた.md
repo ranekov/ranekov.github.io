@@ -15,8 +15,12 @@ lang: ja
     <canvas id="nb-canvas" width="480" height="600"></canvas>
   </div>
   <div class="nb-touch-controls">
-    <div class="nb-touch-btn" id="nb-btn-left">◀</div>
-    <div class="nb-touch-btn" id="nb-btn-right">▶</div>
+    <div class="nb-touch-btn" id="nb-btn-left">
+      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>
+    </div>
+    <div class="nb-touch-btn" id="nb-btn-right">
+      <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+    </div>
   </div>
   <p class="nb-game-msg">← → キー / マウス / タッチ でパドル移動。ブロックを全部壊すとレベルアップ</p>
 </div>
