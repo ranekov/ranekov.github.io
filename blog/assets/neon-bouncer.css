@@ -93,3 +93,7 @@
   .nb-game-panel { padding: 1rem; }
   .nb-game-ui { gap: 14px; font-size: 11px; }
 }
+
+@media (min-width: 640px) {
+  #nb-canvas { max-width: 520px; }
+}
