@@ -88,7 +88,6 @@
 
     if (livesEl) {
       livesEl.classList.remove('nb-life-pulse');
-
       void livesEl.offsetWidth;
       livesEl.classList.add('nb-life-pulse');
     }
@@ -163,6 +162,8 @@
     ball = newBall();
   }
 
+  const MAX_BOUNCE_ANGLE = Math.PI / 3;
+
   function update() {
     if (!started || gameOver) return;
 
@@ -181,8 +182,11 @@
         ball.x > paddle.x && ball.x < paddle.x + paddle.w &&
         ball.dy > 0) {
       const hitPos = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
-      ball.dx = hitPos * 5;
-      ball.dy = -Math.abs(ball.dy);
+      const clampedHitPos = Math.min(Math.max(hitPos, -1), 1);
+      const speed = Math.hypot(ball.dx, ball.dy);
+      const angle = clampedHitPos * MAX_BOUNCE_ANGLE;
+      ball.dx = speed * Math.sin(angle);
+      ball.dy = -speed * Math.cos(angle);
     }
 
     if (ball.y - ball.r > H) {
