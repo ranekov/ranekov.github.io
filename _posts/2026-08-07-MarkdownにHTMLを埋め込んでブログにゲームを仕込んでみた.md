@@ -3,6 +3,21 @@ title: "MarkdownにHTMLを埋め込んでブログにゲームを仕込んでみ
 date: 2026-08-07 22:19 +0900
 lang: ja
 ---
+ブログを書いている途中、ふと思い出したことがありました。
+
+> そういえば、MarkdownってHTMLを埋め込めるよな？
+
+そこで思いつきました。
+
+「せっかくなら、ブログの記事内にゲームそのものを埋め込んでみよう！」と
+
+HTMLやJavaScriptを自由に扱えるのはGitHub Pagesブログ民の特権です
+
+記事を読むだけではなく、ゲームができるブログ！
+
+GitHub Pagesだからこそ、こういう自由な遊び方ができます
+
+# ブロック崩しゲーム！
 <link rel="stylesheet" href="/blog/assets/neon-bouncer.css">
 <div class="nb-game-panel">
   <div class="nb-game-ui">
