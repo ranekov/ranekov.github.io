@@ -72,6 +72,20 @@
   });
   canvas.addEventListener('touchstart', e => {
     e.preventDefault();
+    if (!started) {
+      started = true;
+      return;
+    }
+    if (gameOver) {
+      score = 0; lives = 3; level = 1;
+      scoreEl.textContent = score;
+      livesEl.textContent = lives;
+      levelEl.textContent = level;
+      initBlocks();
+      resetBallAndPaddle();
+      gameOver = false;
+      return;
+    }
     const rect = canvas.getBoundingClientRect();
     const tx = (e.touches[0].clientX - rect.left) * (W / rect.width);
     paddle.x = Math.min(Math.max(tx - paddle.w / 2, 0), W - paddle.w);
@@ -102,6 +116,7 @@
   bindHoldButton(btnRight, held => { rightPressed = held; });
 
   let gameOver = false;
+  let started = false;
 
   function resetBallAndPaddle() {
     paddle.x = W / 2 - paddle.w / 2;
@@ -109,7 +124,7 @@
   }
 
   function update() {
-    if (gameOver) return;
+    if (!started || gameOver) return;
 
     if (rightPressed) paddle.x += paddle.speed;
     if (leftPressed) paddle.x -= paddle.speed;
@@ -226,7 +241,21 @@
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    if (gameOver) {
+    if (!started) {
+      ctx.fillStyle = '#0a0a0fdd';
+      ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#00ff88';
+      ctx.shadowColor = '#00ff88';
+      ctx.shadowBlur = 12;
+      ctx.font = 'bold 26px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('CLICK TO START', W / 2, H / 2);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#888';
+      ctx.font = '12px "JetBrains Mono", monospace';
+      ctx.fillText('クリックまたはタップでスタート', W / 2, H / 2 + 30);
+      ctx.textAlign = 'left';
+    } else if (gameOver) {
       ctx.fillStyle = '#0a0a0fdd';
       ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = '#ff3355';
@@ -250,6 +279,10 @@
   }
 
   canvas.addEventListener('click', () => {
+    if (!started) {
+      started = true;
+      return;
+    }
     if (gameOver) {
       score = 0; lives = 3; level = 1;
       scoreEl.textContent = score;
