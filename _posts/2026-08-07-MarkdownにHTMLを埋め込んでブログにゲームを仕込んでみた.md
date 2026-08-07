@@ -4,7 +4,6 @@ date: 2026-08-07 22:19 +0900
 lang: ja
 ---
 <link rel="stylesheet" href="/blog/assets/neon-bouncer.css">
-<script src="/blog/assets/neon-bouncer.js"></script>
 <div class="nb-game-panel">
   <div class="nb-game-ui">
     <div><span class="nb-label">SCORE </span><span class="nb-value" id="nb-score">0</span></div>
@@ -21,4 +20,5 @@ lang: ja
   </div>
   <p class="nb-game-msg">← → キー / マウス / タッチ でパドル移動。ブロックを全部壊すとレベルアップ</p>
 </div>
+<script src="/blog/assets/neon-bouncer.js"></script>
 > ゲームはめんどいので[claude](https://claude.ai/)に作らせました
