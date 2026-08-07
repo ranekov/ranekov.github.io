@@ -4,7 +4,7 @@
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
-  const DPR = Math.max(window.devicePixelRatio || 1, 1080 / H);
+  const DPR = Math.min(window.devicePixelRatio || 1, 3);
   if (DPR > 1) {
     canvas.style.width = W + 'px';
     canvas.style.height = H + 'px';
