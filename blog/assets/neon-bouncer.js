@@ -56,6 +56,21 @@
     }
   }
 
+  let lifeLostFlash = 0;
+  let screenShake = 0;
+
+  function triggerLifeLostEffect() {
+    lifeLostFlash = 20;
+    screenShake = 15;
+
+    if (livesEl) {
+      livesEl.classList.remove('nb-life-pulse');
+
+      void livesEl.offsetWidth;
+      livesEl.classList.add('nb-life-pulse');
+    }
+  }
+
   let rightPressed = false, leftPressed = false;
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') rightPressed = true;
@@ -66,6 +81,7 @@
     if (e.key === 'ArrowLeft') leftPressed = false;
   });
   canvas.addEventListener('mousemove', e => {
+    if (!started || gameOver) return;
     const rect = canvas.getBoundingClientRect();
     const mx = (e.clientX - rect.left) * (W / rect.width);
     paddle.x = Math.min(Math.max(mx - paddle.w / 2, 0), W - paddle.w);
@@ -92,6 +108,7 @@
   }, { passive: false });
   canvas.addEventListener('touchmove', e => {
     e.preventDefault();
+    if (!started || gameOver) return;
     const rect = canvas.getBoundingClientRect();
     const tx = (e.touches[0].clientX - rect.left) * (W / rect.width);
     paddle.x = Math.min(Math.max(tx - paddle.w / 2, 0), W - paddle.w);
@@ -148,6 +165,7 @@
     if (ball.y - ball.r > H) {
       lives--;
       livesEl.textContent = lives;
+      triggerLifeLostEffect();
       if (lives <= 0) {
         gameOver = true;
       } else {
@@ -192,10 +210,22 @@
       p.life--;
     });
     particles = particles.filter(p => p.life > 0);
+
+    if (lifeLostFlash > 0) lifeLostFlash--;
+    if (screenShake > 0) screenShake--;
   }
 
   function draw() {
-    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+
+    if (screenShake > 0) {
+      const mag = (screenShake / 15) * 8;
+      const ox = (Math.random() - 0.5) * mag;
+      const oy = (Math.random() - 0.5) * mag;
+      ctx.translate(ox, oy);
+    }
+
+    ctx.clearRect(-20, -20, W + 40, H + 40);
 
     ctx.fillStyle = '#ffffff15';
     for (let i = 0; i < 40; i++) {
@@ -269,6 +299,13 @@
       ctx.font = '12px "JetBrains Mono", monospace';
       ctx.fillText('クリックまたはタップで再挑戦', W / 2, H / 2 + 45);
       ctx.textAlign = 'left';
+    }
+
+    ctx.restore();
+
+    if (lifeLostFlash > 0) {
+      ctx.fillStyle = `rgba(255, 51, 85, ${(lifeLostFlash / 20) * 0.35})`;
+      ctx.fillRect(0, 0, W, H);
     }
   }
 
