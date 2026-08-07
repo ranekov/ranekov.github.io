@@ -32,7 +32,7 @@
   const levelEl = document.getElementById('nb-level');
   const highscoreEl = document.getElementById('nb-highscore');
 
-  const paddle = { w: 90, h: 12, x: W / 2 - 45, y: H - 30, speed: 8, dx: 0 };
+  const paddle = { w: 90, h: 12, x: W / 2 - 45, y: H - 30, speed: 8, dx: 0, targetX: W / 2 - 45 };
 
   function newBall() {
     return {
@@ -106,7 +106,7 @@
     if (!started || gameOver) return;
     const rect = canvas.getBoundingClientRect();
     const mx = (e.clientX - rect.left) * (W / rect.width);
-    paddle.x = Math.min(Math.max(mx - paddle.w / 2, 0), W - paddle.w);
+    paddle.targetX = Math.min(Math.max(mx - paddle.w / 2, 0), W - paddle.w);
   });
   canvas.addEventListener('touchstart', e => {
     e.preventDefault();
@@ -126,14 +126,14 @@
     }
     const rect = canvas.getBoundingClientRect();
     const tx = (e.touches[0].clientX - rect.left) * (W / rect.width);
-    paddle.x = Math.min(Math.max(tx - paddle.w / 2, 0), W - paddle.w);
+    paddle.targetX = Math.min(Math.max(tx - paddle.w / 2, 0), W - paddle.w);
   }, { passive: false });
   canvas.addEventListener('touchmove', e => {
     e.preventDefault();
     if (!started || gameOver) return;
     const rect = canvas.getBoundingClientRect();
     const tx = (e.touches[0].clientX - rect.left) * (W / rect.width);
-    paddle.x = Math.min(Math.max(tx - paddle.w / 2, 0), W - paddle.w);
+    paddle.targetX = Math.min(Math.max(tx - paddle.w / 2, 0), W - paddle.w);
   }, { passive: false });
 
   const btnLeft = document.getElementById('nb-btn-left');
@@ -159,35 +159,143 @@
 
   function resetBallAndPaddle() {
     paddle.x = W / 2 - paddle.w / 2;
+    paddle.targetX = paddle.x;
     ball = newBall();
   }
 
   const MAX_BOUNCE_ANGLE = Math.PI / 3;
+  const PADDLE_FOLLOW = 0.3;
+  function sweptCircleRect(prevX, prevY, curX, curY, r, rect) {
+    const ex = { x: rect.x - r, y: rect.y - r, w: rect.w + r * 2, h: rect.h + r * 2 };
+    const dx = curX - prevX, dy = curY - prevY;
 
-  function update() {
-    if (!started || gameOver) return;
+    let tMin = 0, tMax = 1, axis = null;
 
-    if (rightPressed) paddle.x += paddle.speed;
-    if (leftPressed) paddle.x -= paddle.speed;
-    paddle.x = Math.min(Math.max(paddle.x, 0), W - paddle.w);
+    if (dx !== 0) {
+      let t1 = (ex.x - prevX) / dx;
+      let t2 = (ex.x + ex.w - prevX) / dx;
+      if (t1 > t2) { const tmp = t1; t1 = t2; t2 = tmp; }
+      if (t1 > tMin) { tMin = t1; axis = 'x'; }
+      if (t2 < tMax) tMax = t2;
+    } else if (prevX < ex.x || prevX > ex.x + ex.w) {
+      return null;
+    }
 
-    ball.x += ball.dx;
-    ball.y += ball.dy;
+    if (dy !== 0) {
+      let t1 = (ex.y - prevY) / dy;
+      let t2 = (ex.y + ex.h - prevY) / dy;
+      if (t1 > t2) { const tmp = t1; t1 = t2; t2 = tmp; }
+      if (t1 > tMin) { tMin = t1; axis = 'y'; }
+      if (t2 < tMax) tMax = t2;
+    } else if (prevY < ex.y || prevY > ex.y + ex.h) {
+      return null;
+    }
 
-    if (ball.x - ball.r < 0 || ball.x + ball.r > W) ball.dx *= -1;
-    if (ball.y - ball.r < 0) ball.dy *= -1;
+    if (tMin > tMax || tMin < 0 || tMin >= 1) return null;
+    return { t: tMin, axis };
+  }
 
-    if (ball.y + ball.r > paddle.y &&
-        ball.y + ball.r < paddle.y + paddle.h &&
-        ball.x > paddle.x && ball.x < paddle.x + paddle.w &&
-        ball.dy > 0) {
-      const hitPos = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+  function handlePaddleCollision(prevX, prevY) {
+    if (ball.dy <= 0 && ball.dx === 0) return false;
+
+    const rect = { x: paddle.x, y: paddle.y, w: paddle.w, h: paddle.h };
+    const hit = sweptCircleRect(prevX, prevY, ball.x, ball.y, ball.r, rect);
+    if (!hit) return false;
+
+    const impactX = prevX + (ball.x - prevX) * hit.t;
+    const impactY = prevY + (ball.y - prevY) * hit.t;
+
+    if (hit.axis === 'y' && ball.dy > 0) {
+      const hitPos = (impactX - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
       const clampedHitPos = Math.min(Math.max(hitPos, -1), 1);
       const speed = Math.hypot(ball.dx, ball.dy);
       const angle = clampedHitPos * MAX_BOUNCE_ANGLE;
+
       ball.dx = speed * Math.sin(angle);
-      ball.dy = -speed * Math.cos(angle);
+      ball.dy = -speed * Math.abs(Math.cos(angle));
+      ball.x = impactX;
+      ball.y = paddle.y - ball.r - 0.01;
+      return true;
+    } else if (hit.axis === 'x') {
+      ball.dx *= -1;
+      ball.x = impactX + (ball.dx > 0 ? 0.01 : -0.01);
+      ball.y = impactY;
+      return true;
     }
+    return false;
+  }
+
+  function resolveBlockCollisions(prevX, prevY) {
+    let nearest = null;
+    for (const b of blocks) {
+      if (!b.alive) continue;
+      const rect = { x: b.x, y: b.y, w: b.w, h: b.h };
+      const hit = sweptCircleRect(prevX, prevY, ball.x, ball.y, ball.r, rect);
+      if (hit && (!nearest || hit.t < nearest.hit.t)) {
+        nearest = { block: b, hit };
+      }
+    }
+    if (!nearest) return;
+
+    const { block: b, hit } = nearest;
+    const impactX = prevX + (ball.x - prevX) * hit.t;
+    const impactY = prevY + (ball.y - prevY) * hit.t;
+
+    if (hit.axis === 'x') {
+      ball.dx *= -1;
+      ball.x = impactX + (ball.dx > 0 ? 0.01 : -0.01);
+      ball.y = impactY;
+    } else {
+      ball.dy *= -1;
+      ball.y = impactY + (ball.dy > 0 ? 0.01 : -0.01);
+      ball.x = impactX;
+    }
+
+    b.hp--;
+    if (b.hp <= 0) {
+      b.alive = false;
+      spawnParticles(b.x + b.w / 2, b.y + b.h / 2, b.color);
+      score += 10 * level;
+    } else {
+      score += 3;
+    }
+    scoreEl.textContent = score;
+    if (score > highscore) {
+      highscore = score;
+      highscoreEl.textContent = highscore;
+    }
+  }
+
+  function update(dtFactor) {
+    if (!started || gameOver) return;
+
+    if (rightPressed) paddle.x += paddle.speed * dtFactor;
+    if (leftPressed) paddle.x -= paddle.speed * dtFactor;
+    const follow = 1 - Math.pow(1 - PADDLE_FOLLOW, dtFactor);
+    paddle.x += (paddle.targetX - paddle.x) * follow;
+    paddle.x = Math.min(Math.max(paddle.x, 0), W - paddle.w);
+    paddle.targetX = Math.min(Math.max(paddle.targetX, 0), W - paddle.w);
+
+    const prevBallX = ball.x;
+    const prevBallY = ball.y;
+
+    ball.x += ball.dx * dtFactor;
+    ball.y += ball.dy * dtFactor;
+
+    if (ball.x - ball.r < 0 && ball.dx < 0) {
+      ball.dx *= -1;
+      ball.x = ball.r;
+    } else if (ball.x + ball.r > W && ball.dx > 0) {
+      ball.dx *= -1;
+      ball.x = W - ball.r;
+    }
+    if (ball.y - ball.r < 0 && ball.dy < 0) {
+      ball.dy *= -1;
+      ball.y = ball.r;
+    }
+
+    handlePaddleCollision(prevBallX, prevBallY);
+    resolveBlockCollisions(prevBallX, prevBallY);
 
     if (ball.y - ball.r > H) {
       lives--;
@@ -202,30 +310,7 @@
       }
     }
 
-    let aliveCount = 0;
-    for (const b of blocks) {
-      if (!b.alive) continue;
-      aliveCount++;
-      if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
-          ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
-        ball.dy *= -1;
-        b.hp--;
-        if (b.hp <= 0) {
-          b.alive = false;
-          spawnParticles(b.x + b.w / 2, b.y + b.h / 2, b.color);
-          score += 10 * level;
-        } else {
-          score += 3;
-        }
-        scoreEl.textContent = score;
-        if (score > highscore) {
-          highscore = score;
-          highscoreEl.textContent = highscore;
-        }
-        break;
-      }
-    }
-
+    const aliveCount = blocks.reduce((n, b) => n + (b.alive ? 1 : 0), 0);
     if (aliveCount === 0) {
       level++;
       levelEl.textContent = level;
@@ -234,14 +319,14 @@
     }
 
     particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life--;
+      p.x += p.vx * dtFactor;
+      p.y += p.vy * dtFactor;
+      p.life -= dtFactor;
     });
     particles = particles.filter(p => p.life > 0);
 
-    if (lifeLostFlash > 0) lifeLostFlash--;
-    if (screenShake > 0) screenShake--;
+    if (lifeLostFlash > 0) lifeLostFlash = Math.max(0, lifeLostFlash - dtFactor);
+    if (screenShake > 0) screenShake = Math.max(0, screenShake - dtFactor);
   }
 
   function draw() {
@@ -277,7 +362,7 @@
     });
 
     particles.forEach(p => {
-      ctx.globalAlpha = p.life / 30;
+      ctx.globalAlpha = Math.max(0, p.life / 30);
       ctx.fillStyle = p.color;
       ctx.fillRect(p.x, p.y, 4, 4);
       ctx.globalAlpha = 1;
@@ -338,12 +423,6 @@
     }
   }
 
-  function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-  }
-
   canvas.addEventListener('click', () => {
     if (!started) {
       started = true;
@@ -359,6 +438,17 @@
       gameOver = false;
     }
   });
+  let lastTime = null;
+  function loop(now) {
+    if (lastTime === null) lastTime = now;
+    const dt = Math.min(now - lastTime, 1000 / 30);
+    lastTime = now;
+    const dtFactor = dt / (1000 / 60);
 
-  loop();
+    update(dtFactor);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
 })();
