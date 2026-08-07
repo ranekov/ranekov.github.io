@@ -4,7 +4,7 @@
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
-  const DPR = window.devicePixelRatio || 1;
+  const DPR = Math.max(window.devicePixelRatio || 1, 1080 / H);
   if (DPR > 1) {
     canvas.style.width = W + 'px';
     canvas.style.height = H + 'px';
@@ -177,6 +177,8 @@
       triggerLifeLostEffect();
       if (lives <= 0) {
         gameOver = true;
+        lifeLostFlash = 0;
+        screenShake = 0;
       } else {
         resetBallAndPaddle();
       }
