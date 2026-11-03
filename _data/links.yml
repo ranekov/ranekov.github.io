@@ -1,6 +1,6 @@
-- name: 雨音とき
-  url: https://amanetoki.com/
-  icon: https://cdn.amanetoki.com/avatar/me.png
-  note_ja: 雨音とき の個人サイト。プロフィール・つぶやき・動画・サーバー統計。
-  note_en: Amane Toki’s personal website. Profile, posts, videos, and server statistics.
-  note_ru: Личный сайт Аманэ Токи. Профиль, заметки, видео и статистика сервера.
+# - name: name
+#  url: https://example.test
+#  icon: https://example.test/icon.png
+#  note_ja: japanese
+#  note_en: english
+#  note_ru: russian
