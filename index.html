@@ -30,7 +30,7 @@ title: "// Welcome to Ranekov's Website"
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
 // Welcome to Ranekov's Website
 </title>
@@ -47,11 +47,14 @@ href="{{ page.url | absolute_url }}">
   .site { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
   nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
   .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
-  .nav-links { display: flex; gap: 0.6rem; }
+  .nav-links { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; }
   .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
   .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
   .blog-btn:hover { background: rgba(255,51,85,0.08); border-color: #ff3355; color: #ff3355; }
+  .link-btn { background: none; border: 1px solid #58a6ff; color: #58a6ff; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+  .link-btn:hover { background: rgba(88,166,255,0.08); border-color: #58a6ff; color: #58a6ff; }
+  .link-desc { font-size: 14px; color: #888; line-height: 1.7; margin-bottom: 1.2rem; }
   .blog-list { display: flex; flex-direction: column; gap: 10px; }
   .blog-item { display: block; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 0.9rem 1.1rem; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
   .blog-item:hover { border-color: #00ff88; transform: translateY(-2px); }
@@ -119,10 +122,35 @@ href="{{ page.url | absolute_url }}">
   .contact-value { font-size: 13px; color: #e0e0e0; }
   footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
   footer span { color: #00ff88; }
+  .term-body { overflow-x: auto; }
+  .contact-value { overflow-wrap: anywhere; }
+  @media (max-width: 768px) {
+    nav { padding: 0.8rem 1.5rem; }
+    .hero { padding: 4rem 1.5rem 3rem; }
+    .terminal { padding: 0 1.5rem; }
+    section { padding: 2.5rem 1.5rem; }
+  }
   @media (max-width: 500px) {
-    nav { padding: 0.8rem 1rem; }
+    nav { padding: 0.7rem 1rem; gap: 0.5rem; }
+    .nav-logo { font-size: 16px; }
+    .nav-links { gap: 0.35rem; }
+    .lang-btn, .blog-btn, .link-btn { padding: 4px 8px; font-size: 10px; }
     .hero, section, .terminal { padding-left: 1rem; padding-right: 1rem; }
-    .hero { padding-top: 3rem; }
+    .hero { padding-top: 3rem; padding-bottom: 2.5rem; }
+    .hero-desc { font-size: 14px; }
+    .cta-row { flex-direction: column; }
+    .cta-row button { width: 100%; }
+    .term-body { padding: 1rem; font-size: 11.5px; }
+    .section-title { font-size: 20px; margin-bottom: 1.5rem; }
+    .cards { grid-template-columns: 1fr; }
+    .lang-cards { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .blog-cta .btn-outline, .link-cta .btn-outline { display: block !important; text-align: center; }
+  }
+  @media (max-width: 360px) {
+    .nav-logo { font-size: 14px; }
+    .lang-btn, .blog-btn, .link-btn { padding: 3px 6px; font-size: 9px; }
+    .hero-name { font-size: 2rem; }
   }
 </style>
 </head>
@@ -132,6 +160,7 @@ href="{{ page.url | absolute_url }}">
   <div class="nav-logo"><a class="nav-logo" href="/">Ranekov</a></div>
   <div class="nav-links">
     <a class="blog-btn" href="/blog" id="blog-nav-btn">Blog</a>
+    <a class="link-btn" href="/link" id="link-nav-btn">Links</a>
     <button class="lang-btn" onclick="setLang('ru')">RU</button>
     <button class="lang-btn" onclick="setLang('ja')">JA</button>
     <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -336,7 +365,16 @@ href="{{ page.url | absolute_url }}">
 </section>
 
 <section>
-  <p class="section-label" id="sec3-label">// 04 — Contact</p>
+  <p class="section-label" id="seclink-label">// 04 — Links</p>
+  <h2 class="section-title" id="seclink-title">Link Exchange</h2>
+  <p class="link-desc" id="link-desc">Sites I exchange links with. Take a look at the friends of this site.</p>
+  <div class="link-cta">
+    <a class="btn-outline" href="/link" id="link-view-all" style="text-decoration:none; display:inline-block;">View links →</a>
+  </div>
+</section>
+
+<section>
+  <p class="section-label" id="sec3-label">// 05 — Contact</p>
   <h2 class="section-title" id="sec3-title">Get in touch</h2>
   <div class="contact-grid">
     <a class="contact-card" href="https://github.com/ranekov" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
@@ -383,9 +421,10 @@ const C = {
     s2label: '// 02 — スキル', s2title: '技術スタック',
     cat1:'🌐 Web', cat2:'🔗 ネットワーク', cat3:'🕵️ 匿名化・サイバーセキュリティ', cat4:'🤖 AIモデル研究',
     langLabel:'🗣️ 言語', lvlJa:'ネイティブ', lvlRu:'学習中', lvlEn:'初級',
-    blogNav: 'ブログ',
+    blogNav: 'ブログ', linkNav: '相互リンク',
+    slinklabel: '// 04 — リンク', slinktitle: '相互リンク', linkDesc: '相互リンクしているサイトの一覧です。ぜひ覗いてみてください。', linkViewAll: 'リンク一覧を見る →',
     sblabel: '// 03 — ブログ', sbtitle: '最新の投稿', blogEmpty: 'まだ投稿はありません', blogViewAll: 'すべての投稿を見る →',
-    s3label: '// 04 — コンタクト', s3title: '連絡先',
+    s3label: '// 05 — コンタクト', s3title: '連絡先',
   },
   en: {
     sub: '// Welcome to Ranekov\'s Website',
@@ -400,9 +439,10 @@ const C = {
     s2label: '// 02 — Skills', s2title: 'Tech Stack',
     cat1:'🌐 Web', cat2:'🔗 Network', cat3:'🕵️ Anonymity & Cybersecurity', cat4:'🤖 AI Research',
     langLabel:'🗣️ Languages', lvlJa:'Native', lvlRu:'Learning', lvlEn:'Beginner',
-    blogNav: 'Blog',
+    blogNav: 'Blog', linkNav: 'Links',
+    slinklabel: '// 04 — Links', slinktitle: 'Link Exchange', linkDesc: 'Sites I exchange links with. Take a look at the friends of this site.', linkViewAll: 'View links →',
     sblabel: '// 03 — Blog', sbtitle: 'Latest posts', blogEmpty: 'No posts yet', blogViewAll: 'View all posts →',
-    s3label: '// 04 — Contact', s3title: 'Get in touch',
+    s3label: '// 05 — Contact', s3title: 'Get in touch',
   },
   ru: {
     sub: '// Добро пожаловать на сайт Ranekov',
@@ -417,9 +457,10 @@ const C = {
     s2label: '// 02 — Навыки', s2title: 'Технологии',
     cat1:'🌐 Web', cat2:'🔗 Сеть', cat3:'🕵️ Анонимизация и кибербезопасность', cat4:'🤖 Исследование ИИ',
     langLabel:'🗣️ Языки', lvlJa:'Родной', lvlRu:'Учу', lvlEn:'Начинающий',
-    blogNav: 'Блог',
+    blogNav: 'Блог', linkNav: 'Ссылки',
+    slinklabel: '// 04 — Ссылки', slinktitle: 'Обмен ссылками', linkDesc: 'Сайты, с которыми я обмениваюсь ссылками. Загляните к друзьям этого сайта.', linkViewAll: 'Смотреть ссылки →',
     sblabel: '// 03 — Блог', sbtitle: 'Последние посты', blogEmpty: 'Пока нет постов', blogViewAll: 'Смотреть все посты →',
-    s3label: '// 04 — Контакт', s3title: 'Связаться',
+    s3label: '// 05 — Контакт', s3title: 'Связаться',
   }
 };
 
@@ -458,6 +499,11 @@ function setLang(lang) {
   document.getElementById('sec3-label').textContent = d.s3label;
   document.getElementById('sec3-title').textContent = d.s3title;
   document.getElementById('blog-nav-btn').textContent = d.blogNav;
+  document.getElementById('link-nav-btn').textContent = d.linkNav;
+  document.getElementById('seclink-label').textContent = d.slinklabel;
+  document.getElementById('seclink-title').textContent = d.slinktitle;
+  document.getElementById('link-desc').textContent = d.linkDesc;
+  document.getElementById('link-view-all').textContent = d.linkViewAll;
   document.getElementById('secblog-label').textContent = d.sblabel;
   document.getElementById('secblog-title').textContent = d.sbtitle;
   document.getElementById('blog-view-all').textContent = d.blogViewAll;
@@ -493,6 +539,8 @@ document.getElementById('footer-year').textContent = '© ' + new Date().getFullY
   }
   adjustNavOffset();
   window.addEventListener('resize', adjustNavOffset);
+  window.addEventListener('load', adjustNavOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(adjustNavOffset);
 })();
 
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
