@@ -38,7 +38,9 @@ href="{{ page.url | absolute_url }}">
   body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
   nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
   .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
-  .nav-links { display: flex; align-items: center; gap: 0.6rem; }
+  .nav-links { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; }
+  .link-btn { background: none; border: 1px solid #58a6ff; color: #58a6ff; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+  .link-btn:hover { background: rgba(88,166,255,0.08); }
   .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
   main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
@@ -59,6 +61,8 @@ href="{{ page.url | absolute_url }}">
   @media (max-width: 500px) {
     nav { padding: 0.8rem 1rem; }
     main { padding: 2rem 1rem; }
+    .nav-links { gap: 0.35rem; }
+    .lang-btn, .link-btn { padding: 4px 8px; font-size: 10px; }
   }
 </style>
 </head>
@@ -67,6 +71,7 @@ href="{{ page.url | absolute_url }}">
 <nav>
   <a class="nav-logo" href="/">Ranekov</a>
   <div class="nav-links">
+    <a class="link-btn" href="/link" id="link-nav-btn">Links</a>
     <button class="lang-btn" onclick="setLang('ru')">RU</button>
     <button class="lang-btn" onclick="setLang('ja')">JA</button>
     <button class="lang-btn active" onclick="setLang('en')">EN</button>
@@ -92,6 +97,7 @@ href="{{ page.url | absolute_url }}">
 <script>
 const C = {
   ja: {
+    linkNav: '相互リンク',
     pageLabel: '// ブログ',
     pageTitle: 'すべての投稿',
     empty: 'まだ投稿はありません',
@@ -101,6 +107,7 @@ const C = {
     noResults: '該当する投稿がありません',
   },
   en: {
+    linkNav: 'Links',
     pageLabel: '// Blog',
     pageTitle: 'All posts',
     empty: 'No posts yet',
@@ -110,6 +117,7 @@ const C = {
     noResults: 'No matching posts',
   },
   ru: {
+    linkNav: 'Ссылки',
     pageLabel: '// Блог',
     pageTitle: 'Все посты',
     empty: 'Пока нет постов',
@@ -139,6 +147,7 @@ function setLang(lang) {
   localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
   document.title = d.pageTitle + ' — Ranekov';
+  document.getElementById('link-nav-btn').textContent = d.linkNav;
   document.getElementById('page-label').textContent = d.pageLabel;
   document.getElementById('page-title').textContent = d.pageTitle;
   document.getElementById('search-input').placeholder = d.searchPlaceholder;
