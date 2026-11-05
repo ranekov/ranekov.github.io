@@ -41,7 +41,7 @@ href="{{ page.url | absolute_url }}">
   .nav-links { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; }
   .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
   .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
-  .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
   .blog-btn:hover { background: rgba(255,51,85,0.08); }
   main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
   .page-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
@@ -61,22 +61,14 @@ href="{{ page.url | absolute_url }}">
   .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
   footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
   footer span { color: #00ff88; }
-  @media (max-width: 768px) {
-    nav { padding: 0.8rem 1.5rem; }
-  }
   @media (max-width: 500px) {
-    nav { padding: 0.7rem 1rem; gap: 0.5rem; }
-    .nav-logo { font-size: 16px; }
+    nav { padding: 0.8rem 1rem; }
     .nav-links { gap: 0.35rem; }
     .lang-btn, .blog-btn { padding: 4px 8px; font-size: 10px; }
     main { padding: 2rem 1rem; }
     .page-title { font-size: 22px; }
     .link-grid { grid-template-columns: 1fr; }
     .link-icon { width: 44px; height: 44px; }
-  }
-  @media (max-width: 360px) {
-    .nav-logo { font-size: 14px; }
-    .lang-btn, .blog-btn { padding: 3px 6px; font-size: 9px; }
   }
 </style>
 </head>
