@@ -1,0 +1,39 @@
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { scrollbar-width: none; -ms-overflow-style: none; background: #0a0a0f; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; width: 100%; overflow-x: hidden; }
+  nav { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; border-bottom: 1px solid #1a1a2e; background: rgba(10,10,15,0.97); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .nav-logo { font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700; color: #ffffff; text-decoration: none; }
+  .nav-links { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; }
+  .lang-btn { background: none; border: 1px solid #333; color: #888; padding: 4px 10px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .lang-btn.active, .lang-btn:hover { border-color: #00ff88; color: #00ff88; background: rgba(0,255,136,0.08); }
+  .blog-btn { background: none; border: 1px solid #ff3355; color: #ff3355; padding: 4px 12px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: all 0.2s; }
+  .blog-btn:hover { background: rgba(255,51,85,0.08); }
+  main { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+  .page-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #ff3355; letter-spacing: 2px; margin-bottom: 0.5rem; }
+  .page-title { font-size: 26px; font-weight: 500; color: #fff; margin-bottom: 1rem; }
+  .link-desc { font-size: 14px; color: #888; line-height: 1.7; margin-bottom: 2rem; }
+  .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .link-card { display: flex; align-items: center; gap: 14px; min-width: 0; background: #111118; border: 1px solid #1e1e2e; border-radius: 8px; padding: 1rem 1.1rem; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; }
+  .link-card:hover { border-color: #00ff88; transform: translateY(-2px); }
+  .link-icon { position: relative; flex-shrink: 0; width: 48px; height: 48px; border-radius: 10px; border: 1px solid #1e1e2e; background: #1a1a28; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .link-icon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #111118; }
+  .link-initial { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: #00ff88; }
+  .link-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+  .link-name { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: #e0e0e0; overflow-wrap: anywhere; }
+  .link-note { font-size: 13px; color: #888; line-height: 1.5; overflow-wrap: anywhere; }
+  .link-note[hidden] { display: none; }
+  .link-url { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #58a6ff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .blog-empty { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #555; }
+  footer { border-top: 1px solid #1a1a2e; padding: 1.5rem 2rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #333; max-width: 800px; margin: 0 auto; }
+  footer span { color: #00ff88; }
+  @media (max-width: 500px) {
+    nav { padding: 0.8rem 1rem; }
+    .nav-links { gap: 0.35rem; }
+    .lang-btn, .blog-btn { padding: 4px 8px; font-size: 10px; }
+    main { padding: 2rem 1rem; }
+    .page-title { font-size: 22px; }
+    .link-grid { grid-template-columns: 1fr; }
+    .link-icon { width: 44px; height: 44px; }
+  }
