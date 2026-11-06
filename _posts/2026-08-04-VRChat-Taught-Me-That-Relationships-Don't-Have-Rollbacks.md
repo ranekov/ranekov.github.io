@@ -38,7 +38,7 @@ The only downside was that my place in his schedule naturally became smaller.
 
 Turns out humans don't scale horizontally as well as distributed systems.
 
-## Then He Got a Girlfriend
+## Then He Got a Boyfriend
 
 Eventually, he started dating someone.
 
