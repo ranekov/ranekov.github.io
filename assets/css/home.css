@@ -14,7 +14,7 @@
   margin: 0 auto;
   padding: 4.5rem 1.5rem 4rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 2.5rem;
   align-items: center;
 }
@@ -40,7 +40,7 @@
   height: 8px;
   background: var(--green);
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.75);
   animation: blink 1.4s infinite;
 }
 
@@ -57,7 +57,16 @@
   line-height: 1.08;
   letter-spacing: -0.02em;
   margin-bottom: 0.55rem;
-  text-shadow: 0 0 32px rgba(0, 255, 136, 0.14);
+  text-shadow: 0 0 32px rgba(0, 255, 136, 0.16);
+  display: inline-block;
+  transition: text-shadow var(--transition);
+}
+
+.hero-name:hover {
+  text-shadow:
+    -2px 0 rgba(255, 51, 85, 0.55),
+    2px 0 rgba(0, 201, 255, 0.55),
+    0 0 32px rgba(0, 255, 136, 0.22);
 }
 
 .hero-sub {
@@ -66,6 +75,7 @@
   color: var(--red);
   margin-bottom: 1.25rem;
   opacity: 0.95;
+  min-height: 1.4em;
 }
 
 .flag-row {
@@ -108,27 +118,29 @@
 }
 
 .term-window {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow:
-    0 20px 54px -18px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(0, 255, 136, 0.05);
+    0 24px 60px -18px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(0, 255, 136, 0.06);
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-.term-window:hover {
-  border-color: rgba(0, 255, 136, 0.35);
+.term-window:hover,
+.term-window:focus-within {
+  border-color: rgba(0, 255, 136, 0.45);
   box-shadow:
-    0 24px 60px -18px rgba(0, 0, 0, 0.85),
-    0 0 28px -8px rgba(0, 255, 136, 0.14);
+    0 26px 64px -18px rgba(0, 0, 0, 0.9),
+    0 0 32px -8px rgba(0, 255, 136, 0.18);
 }
 
 .term-bar {
   background: var(--bg-bar);
   border-bottom: 1px solid var(--border);
-  padding: 10px 16px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -154,21 +166,106 @@
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-muted);
-  margin-left: 6px;
+  margin-left: 4px;
+}
+
+.term-status {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--green);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.term-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.8);
 }
 
 .term-body {
-  padding: 1.25rem 1.45rem;
+  padding: 1.15rem 1.3rem;
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.9;
+  font-size: 12px;
+  line-height: 1.8;
+  height: 292px;
+  overflow-y: auto;
   overflow-x: auto;
-  white-space: nowrap;
+  cursor: text;
+  scrollbar-width: thin;
+  scrollbar-color: #252538 transparent;
+}
+
+.term-body > #term-output > div {
+  white-space: pre;
 }
 
 .term-sep {
-  opacity: 0.5;
+  opacity: 0.45;
   margin: 2px 0;
+}
+
+.term-input-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.term-prompt {
+  flex-shrink: 0;
+  white-space: nowrap;
+  cursor: text;
+}
+
+.term-input {
+  flex: 1;
+  min-width: 80px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-bright);
+  caret-color: var(--green);
+}
+
+.term-input::placeholder {
+  color: #3f3f55;
+}
+
+.term-hints {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: rgba(10, 10, 15, 0.65);
+  border-top: 1px solid var(--border);
+}
+
+.term-chip {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.term-chip:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-soft);
 }
 
 .tg { color: var(--green); }
@@ -178,22 +275,23 @@
 .td { color: var(--text-muted); }
 .tw { color: var(--text); }
 
-.tc {
-  display: inline-block;
-  width: 8px;
-  height: 14px;
-  background: var(--green);
-  vertical-align: middle;
-  box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
-  animation: blink 1s infinite;
-}
-
 section {
   max-width: var(--content-width);
   margin: 0 auto;
   padding: 3.5rem 1.5rem;
   border-top: 1px solid var(--border-subtle);
   scroll-margin-top: 64px;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section-title {
@@ -210,6 +308,33 @@ section {
   gap: 12px;
 }
 
+.card,
+.skill-panel,
+.contact-card {
+  position: relative;
+  overflow: hidden;
+  --mx: 50%;
+  --my: 50%;
+}
+
+.card::before,
+.skill-panel::before,
+.contact-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(240px circle at var(--mx) var(--my), rgba(0, 255, 136, 0.1), transparent 70%);
+  transition: opacity 0.25s ease;
+}
+
+.card:hover::before,
+.skill-panel:hover::before,
+.contact-card:hover::before {
+  opacity: 1;
+}
+
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -218,11 +343,30 @@ section {
   transition: border-color var(--transition), background var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--green);
+  border-left: 2px solid var(--green);
+  border-top-left-radius: var(--radius-lg);
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.card:hover::after {
+  opacity: 1;
+}
+
 .card:hover {
   border-color: var(--green);
   background: var(--bg-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -10px rgba(0, 255, 136, 0.18);
+  box-shadow: 0 10px 28px -12px rgba(0, 255, 136, 0.22);
 }
 
 .card-icon {
@@ -232,7 +376,7 @@ section {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.35);
 }
 
 .card-title {
@@ -264,7 +408,7 @@ section {
 }
 
 .skill-panel:hover {
-  border-color: rgba(88, 166, 255, 0.35);
+  border-color: rgba(88, 166, 255, 0.4);
 }
 
 .skill-cat-label {
@@ -322,7 +466,14 @@ section {
   height: 100%;
   border-radius: 2px;
   background: linear-gradient(90deg, var(--green), var(--cyan));
-  box-shadow: 0 0 10px rgba(0, 255, 136, 0.35);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-visible .skill-fill {
+  transform: scaleX(1);
 }
 
 .os-row {
@@ -417,6 +568,13 @@ section {
 .lang-fill {
   height: 100%;
   border-radius: 2px;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.is-visible .lang-fill {
+  transform: scaleX(1);
 }
 
 .fill-native { background: var(--green); }
@@ -458,7 +616,7 @@ section {
   border-color: var(--green);
   background: var(--bg-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px -10px rgba(0, 255, 136, 0.18);
+  box-shadow: 0 10px 26px -12px rgba(0, 255, 136, 0.22);
 }
 
 .contact-icon {
@@ -533,6 +691,11 @@ section {
   .term-body {
     padding: 1rem;
     font-size: 11.5px;
+    height: 260px;
+  }
+
+  .term-input {
+    font-size: 16px;
   }
 
   .cards {
@@ -546,5 +709,17 @@ section {
   .blog-cta .btn-outline,
   .link-cta .btn-outline {
     width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .skill-fill,
+  .lang-fill {
+    transform: scaleX(1);
   }
 }
