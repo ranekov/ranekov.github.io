@@ -60,13 +60,14 @@ function setLang(lang) {
   localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
   document.title = d.sub;
-  document.getElementById('hero-sub').textContent = d.sub;
+  scrambleText(document.getElementById('hero-sub'), d.sub);
   document.getElementById('badge-from').textContent = d.badgeFrom;
   document.getElementById('badge-lang').textContent = d.badgeLang;
   document.querySelector('.hero-desc').textContent = d.desc;
   document.getElementById('cta1').textContent = d.cta1;
   document.getElementById('cta2').textContent = d.cta2;
-  document.getElementById('t-status').textContent = d.tStatus;
+  const tStatusEl = document.getElementById('t-status');
+  if (tStatusEl) tStatusEl.textContent = d.tStatus;
   document.getElementById('sec1-label').textContent = d.s1label;
   document.getElementById('sec1-title').textContent = d.s1title;
   document.getElementById('c1-title').textContent = d.c1t;
@@ -107,6 +108,40 @@ function setLang(lang) {
 }
 
 let currentLang = 'en';
+const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SCRAMBLE_CHARS = '0123456789ABCDEFabcdef#$%&*+/<>[]{}АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩ';
+
+function scrambleText(el, finalText) {
+  if (!el) return;
+  if (el._scrambleId) cancelAnimationFrame(el._scrambleId);
+  if (reducedMotion) {
+    el.textContent = finalText;
+    return;
+  }
+  const len = finalText.length;
+  const start = performance.now();
+  const duration = Math.min(480, Math.max(240, len * 14));
+  function frame(now) {
+    const progress = Math.min(1, (now - start) / duration);
+    const revealed = Math.floor(progress * len);
+    let out = '';
+    for (let i = 0; i < len; i++) {
+      if (i < revealed || finalText[i] === ' ') {
+        out += finalText[i];
+      } else {
+        out += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+      }
+    }
+    el.textContent = out;
+    if (progress < 1) {
+      el._scrambleId = requestAnimationFrame(frame);
+    } else {
+      el.textContent = finalText;
+      el._scrambleId = null;
+    }
+  }
+  el._scrambleId = requestAnimationFrame(frame);
+}
 
 function detectInitialLang() {
   const saved = localStorage.getItem('lang');
@@ -120,6 +155,189 @@ function detectInitialLang() {
 }
 
 setLang(detectInitialLang());
+scrambleText(document.querySelector('.hero-name'), 'Ranekov');
+
+(function() {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  function updateProgress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+    bar.style.width = pct + '%';
+  }
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+})();
+
+(function() {
+  const sections = document.querySelectorAll('section');
+  if (!('IntersectionObserver' in window) || reducedMotion) {
+    sections.forEach(s => s.classList.add('is-visible'));
+    return;
+  }
+  sections.forEach(s => s.classList.add('reveal'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  sections.forEach(s => io.observe(s));
+})();
+
+document.querySelectorAll('.card, .skill-panel, .contact-card').forEach(el => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+    el.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+  });
+});
+
+(function() {
+  const termBody = document.getElementById('term-body');
+  const termOutput = document.getElementById('term-output');
+  const termForm = document.getElementById('term-form');
+  const termInput = document.getElementById('term-input');
+  if (!termBody || !termOutput || !termForm || !termInput) return;
+
+  const history = [];
+  let histIdx = -1;
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+  }
+
+  function appendLine(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    termOutput.appendChild(div);
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+
+  function runCommand(raw) {
+    const cmd = raw.trim();
+    if (!cmd) return;
+    history.unshift(cmd);
+    if (history.length > 30) history.pop();
+    histIdx = -1;
+
+    appendLine('<span class="tg">ranekov</span><span class="td">@</span><span class="tr">ubuntu</span><span class="td">:~$ </span><span class="tw">' + escapeHtml(cmd) + '</span>');
+
+    const lower = cmd.toLowerCase();
+    if (lower === 'clear') {
+      termOutput.innerHTML = '';
+      return;
+    }
+    if (lower === 'help') {
+      appendLine('<span class="tb">Available commands:</span>');
+      appendLine('  <span class="tg">whoami</span>           show identity');
+      appendLine('  <span class="tg">neofetch</span>         system info');
+      appendLine('  <span class="tg">skills</span>           jump to tech stack');
+      appendLine('  <span class="tg">ls blog</span>          list latest posts');
+      appendLine('  <span class="tg">links</span>            open link exchange');
+      appendLine('  <span class="tg">uname -a</span>         kernel signature');
+      appendLine('  <span class="tg">clear</span>            clear screen');
+      return;
+    }
+    if (lower === 'whoami') {
+      appendLine('<span class="tw">ranekov</span> <span class="td">— CS student / malware analysis / RU learner</span>');
+      return;
+    }
+    if (lower === 'uname -a' || lower === 'uname') {
+      appendLine('<span class="tw">Linux ranekov 6.12.0-kali-amd64 #1 SMP x86_64 GNU/Linux</span>');
+      return;
+    }
+    if (lower === 'date') {
+      appendLine('<span class="tw">' + escapeHtml(new Date().toUTCString()) + '</span>');
+      return;
+    }
+    if (lower === 'neofetch') {
+      appendLine('<span class="tg">   ___   </span>  <span class="tg">ranekov</span><span class="td">@</span><span class="tr">ubuntu</span>');
+      appendLine('<span class="tg">  / _ \\  </span>  <span class="td">───────────────────</span>');
+      appendLine('<span class="tg"> | |_| | </span>  <span class="ty">OS</span>:     Ubuntu / Kali Linux');
+      appendLine('<span class="tg"> |  _  | </span>  <span class="ty">LANG</span>:   JA · RU · EN');
+      appendLine('<span class="tg"> |_| |_| </span>  <span class="ty">STACK</span>:  PHP · Rust · C · Bash');
+      appendLine('<span class="tg">         </span>  <span class="ty">FOCUS</span>:  RE · Sec · AI');
+      return;
+    }
+    if (lower === 'skills') {
+      appendLine('<span class="tg">→ scrolling to #skills...</span>');
+      const el = document.getElementById('skills');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    if (lower === 'links') {
+      appendLine('<span class="tb">→ opening /link ...</span>');
+      window.location.href = '/link';
+      return;
+    }
+    if (lower === 'ls' || lower === 'ls blog') {
+      const items = Array.from(document.querySelectorAll('#blog-list .blog-item'));
+      if (!items.length) {
+        appendLine('<span class="td">(no posts)</span>');
+        return;
+      }
+      items.forEach(a => {
+        const t = a.querySelector('.blog-item-title');
+        const d = a.querySelector('.blog-item-date');
+        appendLine('<span class="td">' + escapeHtml(d ? d.textContent : '----') + '</span>  <span class="tb">' + escapeHtml(t ? t.textContent : '') + '</span>');
+      });
+      return;
+    }
+    if (lower === 'sudo' || lower.startsWith('sudo ')) {
+      appendLine('<span class="tr">ranekov is not in the sudoers file. This incident will be reported.</span>');
+      return;
+    }
+    if (lower === 'cat profile.json') {
+      appendLine('<span class="ty">NAME</span>: Ranekov | <span class="ty">ORIGIN</span>: Japan | <span class="ty">LEARNING</span>: Русский');
+      return;
+    }
+    appendLine('<span class="tr">bash: ' + escapeHtml(cmd.split(/\s+/)[0]) + ': command not found</span> <span class="td">(try \'help\')</span>');
+  }
+
+  termForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    runCommand(termInput.value);
+    termInput.value = '';
+  });
+
+  termBody.addEventListener('click', () => {
+    if (window.getSelection && window.getSelection().toString()) return;
+    termInput.focus();
+  });
+
+  termInput.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') {
+      if (histIdx + 1 < history.length) {
+        e.preventDefault();
+        histIdx++;
+        termInput.value = history[histIdx];
+      }
+    } else if (e.key === 'ArrowDown') {
+      if (histIdx > 0) {
+        e.preventDefault();
+        histIdx--;
+        termInput.value = history[histIdx];
+      } else if (histIdx === 0) {
+        e.preventDefault();
+        histIdx = -1;
+        termInput.value = '';
+      }
+    }
+  });
+
+  document.querySelectorAll('.term-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      runCommand(chip.dataset.cmd || '');
+      termInput.focus();
+    });
+  });
+})();
 
 document.getElementById('cta1').addEventListener('click', () => {
   const target = document.getElementById('interests');
