@@ -344,6 +344,68 @@ footer span {
   color: var(--accent);
 }
 
+.noscript-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 65% 38% at 50% -12%, rgba(0, 232, 138, 0.08), transparent 72%),
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.noscript-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.75rem;
+  text-align: center;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
+}
+
+.noscript-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.noscript-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+}
+
+.noscript-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.noscript-messages p {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.noscript-messages p:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
 @media (max-width: 560px) {
   nav {
     padding: 0.75rem 1rem;
