@@ -29,25 +29,7 @@ main {
   overflow-y: auto;
   padding: 2px 8px 1rem 0;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 255, 136, 0.35) transparent;
-}
-
-.blog-results::-webkit-scrollbar {
-  width: 6px;
-}
-
-.blog-results::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 999px;
-}
-
-.blog-results::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(0, 255, 136, 0.45), rgba(0, 201, 255, 0.45));
-  border-radius: 999px;
-}
-
-.blog-results::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--green), var(--cyan));
+  scrollbar-color: #252538 transparent;
 }
 
 .blog-loading-more {
