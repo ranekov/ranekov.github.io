@@ -5,6 +5,11 @@ const C = {
     linkDesc: '相互リンクしているサイトの一覧です。ぜひ覗いてみてください。',
     empty: 'まだリンクはありません',
     blog: 'ブログ',
+    modalLabel: '// 外部リンク',
+    modalTitle: '外部サイトへ移動します',
+    modalDesc: 'ここから先は外部のサイトです。移動先の内容や安全性について当サイトは責任を負いかねますが、移動しますか？',
+    modalCancel: 'キャンセル',
+    modalConfirm: '移動する →',
   },
   en: {
     pageLabel: '// Links',
@@ -12,6 +17,11 @@ const C = {
     linkDesc: 'Sites I exchange links with. Take a look at the friends of this site.',
     empty: 'No links yet',
     blog: 'Blog',
+    modalLabel: '// External Link',
+    modalTitle: "Leaving Ranekov's Website",
+    modalDesc: 'You are about to visit an external website. I am not responsible for the content or safety of external sites. Do you want to continue?',
+    modalCancel: 'Cancel',
+    modalConfirm: 'Continue →',
   },
   ru: {
     pageLabel: '// Ссылки',
@@ -19,6 +29,11 @@ const C = {
     linkDesc: 'Сайты, с которыми я обмениваюсь ссылками. Загляните к друзьям этого сайта.',
     empty: 'Пока нет ссылок',
     blog: 'Блог',
+    modalLabel: '// Внешняя ссылка',
+    modalTitle: 'Переход на внешний сайт',
+    modalDesc: 'Вы переходите на сторонний сайт. Я не несу ответственности за содержание и безопасность внешних ресурсов. Продолжить?',
+    modalCancel: 'Отмена',
+    modalConfirm: 'Перейти →',
   }
 };
 
@@ -44,6 +59,11 @@ function setLang(lang) {
   document.getElementById('page-title').textContent = d.pageTitle;
   document.getElementById('link-desc').textContent = d.linkDesc;
   document.getElementById('blog-nav-btn').textContent = d.blog;
+  document.getElementById('modal-label').textContent = d.modalLabel;
+  document.getElementById('modal-title').textContent = d.modalTitle;
+  document.getElementById('modal-desc').textContent = d.modalDesc;
+  document.getElementById('modal-cancel').textContent = d.modalCancel;
+  document.getElementById('modal-confirm').textContent = d.modalConfirm;
   const emptyEl = document.getElementById('link-empty');
   if (emptyEl) emptyEl.textContent = d.empty;
   document.querySelectorAll('.link-card').forEach(card => {
@@ -61,6 +81,44 @@ document.querySelectorAll('.link-icon img').forEach(img => {
   const drop = () => img.remove();
   img.addEventListener('error', drop);
   if (img.complete && img.naturalWidth === 0) drop();
+});
+
+const leaveModal = document.getElementById('leave-modal');
+const modalTargetName = document.getElementById('modal-target-name');
+const modalTargetUrl = document.getElementById('modal-target-url');
+const modalCancel = document.getElementById('modal-cancel');
+const modalConfirm = document.getElementById('modal-confirm');
+
+function openLeaveModal(name, url) {
+  modalTargetName.textContent = name;
+  modalTargetUrl.textContent = url;
+  modalConfirm.href = url;
+  leaveModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  modalCancel.focus();
+}
+
+function closeLeaveModal() {
+  leaveModal.hidden = true;
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.link-card').forEach(card => {
+  card.addEventListener('click', (e) => {
+    e.preventDefault();
+    const nameEl = card.querySelector('.link-name');
+    const name = nameEl ? nameEl.textContent : '';
+    openLeaveModal(name, card.href);
+  });
+});
+
+modalCancel.addEventListener('click', closeLeaveModal);
+modalConfirm.addEventListener('click', closeLeaveModal);
+leaveModal.addEventListener('click', (e) => {
+  if (e.target === leaveModal) closeLeaveModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !leaveModal.hidden) closeLeaveModal();
 });
 
 setLang(detectInitialLang());
