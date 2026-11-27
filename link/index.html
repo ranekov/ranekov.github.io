@@ -34,6 +34,19 @@ href="{{ page.url | absolute_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/link.css' | relative_url }}">
 </head>
 <body>
+<noscript>
+  <div class="noscript-overlay">
+    <div class="noscript-card">
+      <p class="noscript-label">// JavaScript Required</p>
+      <h1 class="noscript-title">JavaScript is disabled</h1>
+      <div class="noscript-messages">
+        <p>このサイトを利用するにはJavaScriptをオンにしてください。</p>
+        <p>Please enable JavaScript in your browser settings to view this website.</p>
+        <p>Пожалуйста, включите JavaScript в настройках браузера для просмотра этого сайта.</p>
+      </div>
+    </div>
+  </div>
+</noscript>
 
 <nav>
   <a class="nav-logo" href="/">Ranekov</a>
@@ -70,6 +83,22 @@ href="{{ page.url | absolute_url }}">
 <footer>
   <span id="footer-year">© 2026 Ranekov</span> — built with <span id="footer-commit">...</span>
 </footer>
+
+<div class="modal-backdrop" id="leave-modal" hidden>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <p class="modal-label" id="modal-label">// External Link</p>
+    <h2 class="modal-title" id="modal-title">Leaving Ranekov's Website</h2>
+    <p class="modal-desc" id="modal-desc">You are about to visit an external website. I am not responsible for the content or safety of external sites. Do you want to continue?</p>
+    <div class="modal-target">
+      <span class="modal-target-name" id="modal-target-name"></span>
+      <span class="modal-target-url" id="modal-target-url"></span>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-outline" id="modal-cancel">Cancel</button>
+      <a class="btn-primary" id="modal-confirm" href="#" target="_blank" rel="noopener noreferrer">Continue →</a>
+    </div>
+  </div>
+</div>
 
 <script src="{{ '/assets/js/link.js' | relative_url }}"></script>
 
