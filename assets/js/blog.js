@@ -57,15 +57,15 @@ function setLang(lang) {
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase() === lang);
   });
-  renderCurrentPosts(true);
+  renderAllBlogPosts();
 }
 
 const PAGE_SIZE = 100;
-let blogPostsCache = null;
 let filteredPosts = [];
 let renderedCount = 0;
 let isLoadingMore = false;
 let searchQuery = '';
+let fetchSeq = 0;
 
 async function fetchAllBlogPosts() {
   try {
@@ -78,28 +78,38 @@ async function fetchAllBlogPosts() {
   }
 }
 
-function getFilteredPosts() {
-  if (!searchQuery) return blogPostsCache || [];
+function getFilteredPosts(posts) {
+  if (!searchQuery) return posts || [];
   const q = searchQuery.toLowerCase();
-  return (blogPostsCache || []).filter(p => p.name.toLowerCase().includes(q));
+  return (posts || []).filter(p => p.name.toLowerCase().includes(q));
 }
 
+const resultsEl = document.getElementById('blog-results');
+const progressBarEl = document.getElementById('scroll-progress');
 
+function updateProgress() {
+  if (!progressBarEl || !resultsEl) return;
+  const max = resultsEl.scrollHeight - resultsEl.clientHeight;
+  const pct = max > 0 ? Math.min(100, Math.max(0, (resultsEl.scrollTop / max) * 100)) : 0;
+  progressBarEl.style.width = pct + '%';
+}
 
-function renderCurrentPosts(reset) {
+function renderCurrentPosts(reset, posts) {
   const listEl = document.getElementById('blog-list');
   const loadingMoreEl = document.getElementById('blog-loading-more');
   const d = C[currentLang];
 
   if (reset) {
-    filteredPosts = getFilteredPosts();
+    filteredPosts = getFilteredPosts(posts);
     renderedCount = 0;
     listEl.innerHTML = '';
+    if (resultsEl) resultsEl.scrollTop = 0;
   }
 
   if (!filteredPosts.length) {
     listEl.innerHTML = '<div class="blog-empty">' + (searchQuery ? d.noResults : d.empty) + '</div>';
     loadingMoreEl.style.display = 'none';
+    updateProgress();
     return;
   }
 
@@ -113,13 +123,15 @@ function renderCurrentPosts(reset) {
   renderedCount += nextSlice.length;
 
   loadingMoreEl.style.display = renderedCount < filteredPosts.length ? 'block' : 'none';
+  updateProgress();
 }
 
 function maybeLoadMore() {
+  if (!resultsEl) return;
   if (isLoadingMore) return;
   if (renderedCount >= filteredPosts.length) return;
-  const scrollBottom = window.innerHeight + window.scrollY;
-  const threshold = document.body.offsetHeight - 300;
+  const scrollBottom = resultsEl.scrollTop + resultsEl.clientHeight;
+  const threshold = resultsEl.scrollHeight - 300;
   if (scrollBottom < threshold) return;
 
   isLoadingMore = true;
@@ -134,24 +146,32 @@ function maybeLoadMore() {
 }
 
 async function renderAllBlogPosts() {
+  const seq = ++fetchSeq;
   const listEl = document.getElementById('blog-list');
+  const loadingMoreEl = document.getElementById('blog-loading-more');
   const d = C[currentLang];
   listEl.innerHTML = '<div class="blog-empty">' + d.loading + '</div>';
-  if (!blogPostsCache) {
-    blogPostsCache = await fetchAllBlogPosts();
-  }
-  renderCurrentPosts(true);
+  loadingMoreEl.style.display = 'none';
+  const posts = await fetchAllBlogPosts();
+  if (seq !== fetchSeq) return;
+  renderCurrentPosts(true, posts);
 }
 
 document.getElementById('search-input').addEventListener('input', (e) => {
   searchQuery = e.target.value;
-  renderCurrentPosts(true);
+  renderAllBlogPosts();
 });
 
-window.addEventListener('scroll', maybeLoadMore);
+if (resultsEl) {
+  resultsEl.addEventListener('scroll', () => {
+    updateProgress();
+    maybeLoadMore();
+  }, { passive: true });
+}
+window.addEventListener('resize', updateProgress);
+window.addEventListener('load', updateProgress);
 
 setLang(detectInitialLang());
-renderAllBlogPosts();
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
 
@@ -159,25 +179,12 @@ document.getElementById('footer-year').textContent = '© ' + new Date().getFullY
   const nav = document.querySelector('nav');
   function adjustNavOffset() {
     document.body.style.paddingTop = nav.offsetHeight + 'px';
+    updateProgress();
   }
   adjustNavOffset();
   window.addEventListener('resize', adjustNavOffset);
   window.addEventListener('load', adjustNavOffset);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(adjustNavOffset);
-})();
-
-(function() {
-  const bar = document.getElementById('scroll-progress');
-  if (!bar) return;
-  function updateProgress() {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
-    bar.style.width = pct + '%';
-  }
-  updateProgress();
-  window.addEventListener('scroll', updateProgress, { passive: true });
-  window.addEventListener('resize', updateProgress);
-  window.addEventListener('load', updateProgress);
 })();
 
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
