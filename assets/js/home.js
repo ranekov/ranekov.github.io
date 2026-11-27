@@ -3,7 +3,7 @@ const C = {
     sub: '// ようこそ、Ranekovのウェブサイトへ',
     badgeFrom: '日本出身', badgeLang: 'ロシア語学習中',
     desc: '日本出身のコンピューターサイエンス学生。ハッキング、マルウェア解析、コンピューターウイルスに情熱を注ぐ。ロシア語を独学中で、ロシア技術コミュニティと繋がりたい。',
-    cta1: '$ explore', cta2: 'git clone', tStatus: '    学生',
+    cta1: '$ explore', cta2: 'git clone', cta2Copied: 'copied ✓', tStatus: '    学生',
     s1label: '// 01 — 興味', s1title: '何が好きか',
     c1t:'ハッキング', c1d:'倫理的ハッキング、ペネトレーションテスト、CTF。システムの穴を探るのが楽しい。',
     c2t:'コンピューターウイルス', c2d:'ウイルス・ワーム・ランサムウェアの仕組みを研究。逆アセンブリ解析が専門。',
@@ -21,7 +21,7 @@ const C = {
     sub: '// Welcome to Ranekov\'s Website',
     badgeFrom: 'From Japan', badgeLang: 'Learning Russian',
     desc: 'Computer science student from Japan. Passionate about hacking, malware analysis, and computer viruses. Self-studying Russian to connect with the Russian tech community.',
-    cta1: '$ explore', cta2: 'git clone', tStatus: '    Student',
+    cta1: '$ explore', cta2: 'git clone', cta2Copied: 'copied ✓', tStatus: '    Student',
     s1label: '// 01 — Interests', s1title: 'What I love',
     c1t:'Hacking', c1d:'Ethical hacking, penetration testing, CTF competitions. Love finding vulnerabilities.',
     c2t:'Computer Viruses', c2d:'Studying viruses, worms and ransomware. Specializing in reverse engineering.',
@@ -39,7 +39,7 @@ const C = {
     sub: '// Добро пожаловать на сайт Ranekov',
     badgeFrom: 'Из Японии', badgeLang: 'Учу русский язык',
     desc: 'Студент из Японии, изучающий компьютерные науки. Увлечён хакингом, анализом вредоносных программ и вирусами. Самостоятельно учу русский, хочу познакомиться с русским тех-сообществом.',
-    cta1: '$ исследовать', cta2: 'git clone', tStatus: '    Студент',
+    cta1: '$ исследовать', cta2: 'git clone', cta2Copied: 'скопировано ✓', tStatus: '    Студент',
     s1label: '// 01 — Интересы', s1title: 'Что мне нравится',
     c1t:'Хакинг', c1d:'Этичный хакинг, пентестинг, CTF-соревнования. Люблю находить уязвимости.',
     c2t:'Компьютерные вирусы', c2d:'Изучаю вирусы, черви и программы-вымогатели. Специализируюсь на реверс-инжиниринге.',
@@ -120,6 +120,28 @@ function detectInitialLang() {
 }
 
 setLang(detectInitialLang());
+
+document.getElementById('cta1').addEventListener('click', () => {
+  const target = document.getElementById('interests');
+  if (target) target.scrollIntoView({ behavior: 'smooth' });
+});
+
+let cloneResetTimer = null;
+document.getElementById('cta2').addEventListener('click', async () => {
+  const btn = document.getElementById('cta2');
+  const cmd = 'git clone https://github.com/ranekov/ranekov.github.io.git';
+  try {
+    await navigator.clipboard.writeText(cmd);
+  } catch (e) {
+    window.open('https://github.com/ranekov/ranekov.github.io', '_blank', 'noopener,noreferrer');
+    return;
+  }
+  btn.textContent = C[currentLang].cta2Copied;
+  clearTimeout(cloneResetTimer);
+  cloneResetTimer = setTimeout(() => {
+    btn.textContent = C[currentLang].cta2;
+  }, 1800);
+});
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
 

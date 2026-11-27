@@ -107,7 +107,7 @@ async function fetchAllBlogPosts() {
     const res = await fetch('/search.json', { cache: 'no-store' });
     if (!res.ok) return [];
     const data = await res.json();
-    return Array.isArray(data) ? data.map(p => ({ name: p.title, url: p.url })) : [];
+    return Array.isArray(data) ? data.map(p => ({ name: p.title, url: p.url, date: p.date || '' })) : [];
   } catch (e) {
     return [];
   }
@@ -124,7 +124,7 @@ function renderPosts() {
     pagEl.innerHTML = '';
     const toShow = posts.slice(0, LATEST_COUNT);
     listEl.innerHTML = toShow.length
-      ? toShow.map(p => '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>').join('')
+      ? toShow.map(p => '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span>' + (p.date ? '<span class="blog-item-date">' + p.date + '</span>' : '') + '</a>').join('')
       : '<div class="blog-empty">' + d.empty + '</div>';
     return;
   }
@@ -142,7 +142,7 @@ function renderPosts() {
   const start = currentPage * SEARCH_PAGE_SIZE;
   const pageItems = results.slice(start, start + SEARCH_PAGE_SIZE);
   listEl.innerHTML = pageItems.map(p =>
-    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span></a>'
+    '<a class="blog-item" href="' + p.url + '"><span class="blog-item-title">' + p.name + '</span>' + (p.date ? '<span class="blog-item-date">' + p.date + '</span>' : '') + '</a>'
   ).join('');
 
   const hasPrev = currentPage > 0;
