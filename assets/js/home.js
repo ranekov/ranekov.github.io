@@ -257,12 +257,12 @@ document.querySelectorAll('.card, .skill-panel, .contact-card').forEach(el => {
       return;
     }
     if (lower === 'neofetch') {
-      appendLine('<span class="tg">   ___   </span>  <span class="tg">ranekov</span><span class="td">@</span><span class="tr">ubuntu</span>');
-      appendLine('<span class="tg">  / _ \\  </span>  <span class="td">───────────────────</span>');
-      appendLine('<span class="tg"> | |_| | </span>  <span class="ty">OS</span>:     Ubuntu / Kali Linux');
-      appendLine('<span class="tg"> |  _  | </span>  <span class="ty">LANG</span>:   JA · RU · EN');
-      appendLine('<span class="tg"> |_| |_| </span>  <span class="ty">STACK</span>:  PHP · Rust · C · Bash');
-      appendLine('<span class="tg">         </span>  <span class="ty">FOCUS</span>:  RE · Sec · AI');
+      appendLine('<span class="tg">  ____  </span>  <span class="tg">ranekov</span><span class="td">@</span><span class="tr">ubuntu</span>');
+      appendLine('<span class="tg"> |  _ \\ </span>  <span class="td">───────────────────</span>');
+      appendLine('<span class="tg"> | |_) |</span>  <span class="ty">OS</span>:     Ubuntu / Kali Linux');
+      appendLine('<span class="tg"> |  _ &lt; </span>  <span class="ty">LANG</span>:   JA · RU · EN');
+      appendLine('<span class="tg"> |_| \\_\\</span>  <span class="ty">STACK</span>:  PHP · Rust · C · Bash');
+      appendLine('<span class="tg">        </span>  <span class="ty">FOCUS</span>:  RE · Sec · AI');
       return;
     }
     if (lower === 'skills') {
@@ -285,7 +285,8 @@ document.querySelectorAll('.card, .skill-panel, .contact-card').forEach(el => {
       items.forEach(a => {
         const t = a.querySelector('.blog-item-title');
         const d = a.querySelector('.blog-item-date');
-        appendLine('<span class="td">' + escapeHtml(d ? d.textContent : '----') + '</span>  <span class="tb">' + escapeHtml(t ? t.textContent : '') + '</span>');
+        const href = a.getAttribute('href') || '#';
+        appendLine('<span class="td">' + escapeHtml(d ? d.textContent : '----') + '</span>  <a class="term-link" href="' + escapeHtml(href) + '">' + escapeHtml(t ? t.textContent : '') + '</a>');
       });
       return;
     }
@@ -306,7 +307,8 @@ document.querySelectorAll('.card, .skill-panel, .contact-card').forEach(el => {
     termInput.value = '';
   });
 
-  termBody.addEventListener('click', () => {
+  termBody.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
     if (window.getSelection && window.getSelection().toString()) return;
     termInput.focus();
   });

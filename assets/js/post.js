@@ -186,6 +186,20 @@ document.getElementById('footer-year').textContent = '© ' + new Date().getFullY
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(adjustNavOffset);
 })();
 
+(function() {
+  const bar = document.getElementById('scroll-progress');
+  if (!bar) return;
+  function updateProgress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+    bar.style.width = pct + '%';
+  }
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  window.addEventListener('load', updateProgress);
+})();
+
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
   .then(res => res.ok ? res.json() : null)
   .then(data => {
