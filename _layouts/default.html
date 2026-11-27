@@ -27,6 +27,7 @@
 content="{{ page.description | default: site.description | escape }}">
 <link rel="canonical"
 href="{{ page.url | absolute_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/common.css' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/post.css' | relative_url }}">
 </head>
 <body>
@@ -36,9 +37,11 @@ href="{{ page.url | absolute_url }}">
   <div class="nav-links">
     <a class="blog-btn" href="/blog" id="blog-btn">Blog</a>
     <a class="link-btn" href="/link" id="link-btn">Links</a>
-    <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
-    <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
-    <button class="lang-btn" onclick="setLang('en')" id="lang-btn-en">EN</button>
+    <div class="lang-group">
+      <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
+      <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
+      <button class="lang-btn" onclick="setLang('en')" id="lang-btn-en">EN</button>
+    </div>
   </div>
 </nav>
 
