@@ -25,6 +25,7 @@ permalink: /404.html
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="robots" content="noindex">
 <title>404 — Ranekov</title>
+<link rel="stylesheet" href="{{ '/assets/css/common.css' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/404.css' | relative_url }}">
 </head>
 <body>
@@ -34,9 +35,11 @@ permalink: /404.html
   <div class="nav-links">
     <a class="blog-btn" href="/blog" id="blog-btn">Blog</a>
     <a class="link-btn" href="/link" id="link-btn">Links</a>
-    <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
-    <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
-    <button class="lang-btn" onclick="setLang('en')" id="lang-btn-en">EN</button>
+    <div class="lang-group">
+      <button class="lang-btn" onclick="setLang('ru')" id="lang-btn-ru">RU</button>
+      <button class="lang-btn" onclick="setLang('ja')" id="lang-btn-ja">JA</button>
+      <button class="lang-btn" onclick="setLang('en')" id="lang-btn-en">EN</button>
+    </div>
   </div>
 </nav>
 
