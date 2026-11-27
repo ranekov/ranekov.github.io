@@ -175,6 +175,17 @@ initMorePosts();
 
 document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear() + ' Ranekov';
 
+(function() {
+  const nav = document.querySelector('nav');
+  function adjustNavOffset() {
+    document.body.style.paddingTop = nav.offsetHeight + 'px';
+  }
+  adjustNavOffset();
+  window.addEventListener('resize', adjustNavOffset);
+  window.addEventListener('load', adjustNavOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(adjustNavOffset);
+})();
+
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
   .then(res => res.ok ? res.json() : null)
   .then(data => {

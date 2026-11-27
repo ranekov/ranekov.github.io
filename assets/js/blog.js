@@ -162,6 +162,8 @@ document.getElementById('footer-year').textContent = '© ' + new Date().getFullY
   }
   adjustNavOffset();
   window.addEventListener('resize', adjustNavOffset);
+  window.addEventListener('load', adjustNavOffset);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(adjustNavOffset);
 })();
 
 fetch('https://api.github.com/repos/ranekov/ranekov.github.io/commits/main')
