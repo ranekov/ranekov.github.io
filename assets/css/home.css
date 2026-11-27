@@ -58,15 +58,6 @@
   letter-spacing: -0.02em;
   margin-bottom: 0.55rem;
   text-shadow: 0 0 32px rgba(0, 255, 136, 0.16);
-  display: inline-block;
-  transition: text-shadow var(--transition);
-}
-
-.hero-name:hover {
-  text-shadow:
-    -2px 0 rgba(255, 51, 85, 0.55),
-    2px 0 rgba(0, 201, 255, 0.55),
-    0 0 32px rgba(0, 255, 136, 0.22);
 }
 
 .hero-sub {
@@ -275,6 +266,22 @@
 .td { color: var(--text-muted); }
 .tw { color: var(--text); }
 
+.term-link {
+  color: var(--blue);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: rgba(88, 166, 255, 0.55);
+  text-underline-offset: 3px;
+  transition: color var(--transition), text-decoration-color var(--transition), text-shadow var(--transition);
+}
+
+.term-link:hover {
+  color: var(--green);
+  text-decoration-style: solid;
+  text-decoration-color: var(--green);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.35);
+}
+
 section {
   max-width: var(--content-width);
   margin: 0 auto;
@@ -341,25 +348,6 @@ section {
   border-radius: var(--radius-lg);
   padding: 1.3rem 1.2rem;
   transition: border-color var(--transition), background var(--transition), transform var(--transition), box-shadow var(--transition);
-}
-
-.card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 14px;
-  height: 14px;
-  border-top: 2px solid var(--green);
-  border-left: 2px solid var(--green);
-  border-top-left-radius: var(--radius-lg);
-  opacity: 0;
-  transition: opacity var(--transition);
-  pointer-events: none;
-}
-
-.card:hover::after {
-  opacity: 1;
 }
 
 .card:hover {
