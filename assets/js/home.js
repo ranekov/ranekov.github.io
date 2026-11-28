@@ -123,10 +123,11 @@ function scrambleTitle(finalText) {
   }
   const len = finalText.length;
   const start = performance.now();
-  const duration = Math.min(540, Math.max(300, len * 16));
-  titleScrambleTimer = setInterval(() => {
+  const duration = Math.min(640, Math.max(360, len * 18));
+  function tick() {
     const progress = Math.min(1, (performance.now() - start) / duration);
-    const revealed = Math.floor(progress * len);
+    const revealProgress = progress < 0.25 ? 0 : (progress - 0.25) / 0.75;
+    const revealed = Math.floor(revealProgress * len);
     let out = '';
     for (let i = 0; i < len; i++) {
       if (i < revealed || finalText[i] === ' ') {
@@ -141,7 +142,9 @@ function scrambleTitle(finalText) {
       clearInterval(titleScrambleTimer);
       titleScrambleTimer = null;
     }
-  }, 45);
+  }
+  tick();
+  titleScrambleTimer = setInterval(tick, 45);
 }
 
 function scrambleText(el, finalText) {
@@ -153,10 +156,11 @@ function scrambleText(el, finalText) {
   }
   const len = finalText.length;
   const start = performance.now();
-  const duration = Math.min(480, Math.max(240, len * 14));
+  const duration = Math.min(540, Math.max(280, len * 16));
   function frame(now) {
     const progress = Math.min(1, (now - start) / duration);
-    const revealed = Math.floor(progress * len);
+    const revealProgress = progress < 0.2 ? 0 : (progress - 0.2) / 0.8;
+    const revealed = Math.floor(revealProgress * len);
     let out = '';
     for (let i = 0; i < len; i++) {
       if (i < revealed || finalText[i] === ' ') {
