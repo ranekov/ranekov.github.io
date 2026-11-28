@@ -1,6 +1,7 @@
 ---
 title: "VRChat Taught Me That Relationships Don't Have Rollbacks"
 date: 2026-08-04 04:33 +0900
+lang: en
 ---
 # VRChat Taught Me That Relationships Don't Have Rollbacks
 
