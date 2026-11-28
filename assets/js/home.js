@@ -59,7 +59,7 @@ function setLang(lang) {
   const d = C[lang];
   localStorage.setItem('lang', lang);
   document.documentElement.lang = lang;
-  document.title = d.sub;
+  scrambleTitle(d.sub);
   scrambleText(document.getElementById('hero-sub'), d.sub);
   document.getElementById('badge-from').textContent = d.badgeFrom;
   document.getElementById('badge-lang').textContent = d.badgeLang;
@@ -108,8 +108,41 @@ function setLang(lang) {
 }
 
 let currentLang = 'en';
+let titleScrambleTimer = null;
 const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const SCRAMBLE_CHARS = '0123456789ABCDEFabcdef#$%&*+/<>[]{}АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩ';
+
+function scrambleTitle(finalText) {
+  if (titleScrambleTimer) {
+    clearInterval(titleScrambleTimer);
+    titleScrambleTimer = null;
+  }
+  if (reducedMotion) {
+    document.title = finalText;
+    return;
+  }
+  const len = finalText.length;
+  const start = performance.now();
+  const duration = Math.min(540, Math.max(300, len * 16));
+  titleScrambleTimer = setInterval(() => {
+    const progress = Math.min(1, (performance.now() - start) / duration);
+    const revealed = Math.floor(progress * len);
+    let out = '';
+    for (let i = 0; i < len; i++) {
+      if (i < revealed || finalText[i] === ' ') {
+        out += finalText[i];
+      } else {
+        out += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+      }
+    }
+    document.title = out;
+    if (progress >= 1) {
+      document.title = finalText;
+      clearInterval(titleScrambleTimer);
+      titleScrambleTimer = null;
+    }
+  }, 45);
+}
 
 function scrambleText(el, finalText) {
   if (!el) return;
